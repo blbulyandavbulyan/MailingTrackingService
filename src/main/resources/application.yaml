@@ -1,1 +1,11 @@
-
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postservice
+    driver-class-name: org.postgresql.Driver
+    username: david
+    password: 4137
+  jpa:
+    show-sql: true
+    properties:
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+      format_sql: true
