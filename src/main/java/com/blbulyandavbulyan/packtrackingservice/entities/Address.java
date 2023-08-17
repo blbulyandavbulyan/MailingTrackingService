@@ -7,15 +7,13 @@ import jakarta.validation.constraints.NotBlank;
 @Entity
 @Table(
         name = "addresses",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"name", "country", "city", "street", "houseNumber"})
+        uniqueConstraints = @UniqueConstraint(columnNames = {"country", "city", "street", "houseNumber"})
 )
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "address_id")
     private Long id;
-    @NotBlank
-    private String name;
     private String country;
     @NotBlank
     private String city;
