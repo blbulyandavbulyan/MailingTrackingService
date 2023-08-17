@@ -15,10 +15,6 @@ public class Receiver {
     private Long receiverId;
     private String name;
     @ManyToOne
-    @JoinTable(
-            name = "receivers_addresses",
-            joinColumns = @JoinColumn(name = "receiver_id"),
-            inverseJoinColumns = @JoinColumn(name = "address_id")
-    )
+    @JoinColumn(name = "address_id")
     private Address address;
 }
