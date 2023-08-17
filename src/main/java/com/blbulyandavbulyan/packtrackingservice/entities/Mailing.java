@@ -12,7 +12,10 @@ import java.util.List;
 @Getter
 @Setter
 public class Mailing {
+    @SuppressWarnings("unused")
     public enum Type{LETTER, PACKAGE, WRAPPER, POSTCARD}
+    @SuppressWarnings("unused")
+    public enum Status{ON_THE_WAY, IN_THE_DESTINATION, DELIVERED}
     @Id
     @Column(name = "mailing_id")
     @NotNull
@@ -22,9 +25,8 @@ public class Mailing {
     @ManyToOne
     @JoinColumn(name = "receiver_id")
     private Receiver receiver;
-    @ManyToOne
-    @JoinColumn(name = "destination_po_id")
-    private PostalOffice destinationPostalOffice;
+    @Enumerated(EnumType.STRING)
+    private Status status;
     @OneToMany(mappedBy = "mailing")
     private List<MailingMovement> mailingMovements;
 }
