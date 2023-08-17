@@ -24,8 +24,7 @@ public class Mailing {
     private Long mailingId;
     @Enumerated(EnumType.STRING)
     private Type type;
-    @ManyToOne
-    @JoinColumn(name = "receiver_id")
+    @Embedded
     private Receiver receiver;
     @NotNull
     @Enumerated(EnumType.STRING)
