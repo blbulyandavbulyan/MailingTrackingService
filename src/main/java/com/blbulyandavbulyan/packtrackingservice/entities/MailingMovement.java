@@ -14,7 +14,7 @@ import java.time.ZonedDateTime;
 public class MailingMovement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "route_unit_id")
+    @Column(name = "movement_id")
     private Long movementId;
     @ManyToOne
     @JoinColumn(name = "mailing_id")
