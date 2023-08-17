@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Table(name = "mailings")
 @Getter
@@ -22,5 +24,6 @@ public class Mailing {
     @ManyToOne
     @JoinColumn(name = "destination_po_id")
     private PostalOffice destinationPostalOffice;
-
+    @OneToMany(mappedBy = "mailing")
+    private List<RouteUnit> routeUnits;
 }
