@@ -1,6 +1,7 @@
 package com.blbulyandavbulyan.packtrackingservice.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,8 +14,8 @@ import java.util.List;
 public class Mailing {
     public enum Type{LETTER, PACKAGE, WRAPPER, POSTCARD}
     @Id
-    @Column(name = "pack_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "mailing_id")
+    @NotNull
     private Long packId;
     @Enumerated(EnumType.STRING)
     private Type type;
@@ -25,5 +26,5 @@ public class Mailing {
     @JoinColumn(name = "destination_po_id")
     private PostalOffice destinationPostalOffice;
     @OneToMany(mappedBy = "mailing")
-    private List<RouteUnit> routeUnits;
+    private List<MailingMoving> mailingMovings;
 }

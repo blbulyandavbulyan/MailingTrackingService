@@ -5,7 +5,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "receivers")
+@Table(
+        name = "receivers",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"name", "address"})
+)
 @Getter
 @Setter
 public class Receiver {
@@ -14,7 +17,5 @@ public class Receiver {
     @Column(name = "id")
     private Long receiverId;
     private String name;
-    @ManyToOne
-    @JoinColumn(name = "address_id")
-    private Address address;
+    private String address;
 }

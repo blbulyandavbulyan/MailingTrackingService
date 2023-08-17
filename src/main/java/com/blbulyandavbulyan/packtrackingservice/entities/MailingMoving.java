@@ -8,10 +8,10 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.ZonedDateTime;
 
 @Entity
-@Table(name = "route_units")
+@Table(name = "mailing_movements")
 @Getter
 @Setter
-public class RouteUnit {
+public class MailingMoving {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "route_unit_id")
