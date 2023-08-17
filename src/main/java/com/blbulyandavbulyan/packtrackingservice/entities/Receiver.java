@@ -8,13 +8,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Receiver {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long receiverId;
+    @Column(name = "receiver_name")
     private String name;
+    @Column(name = "receiver_address")
     private String address;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "postal_office_id")
+    @JoinColumn(name = "receiver_po_id")
     private PostalOffice postalOffice;
 }
