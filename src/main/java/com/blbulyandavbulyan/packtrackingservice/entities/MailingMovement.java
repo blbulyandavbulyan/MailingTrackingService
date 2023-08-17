@@ -15,7 +15,7 @@ public class MailingMovement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "route_unit_id")
-    private Long routeUnitId;
+    private Long movementId;
     @ManyToOne
     @JoinColumn(name = "mailing_id")
     private Mailing mailing;
