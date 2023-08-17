@@ -19,7 +19,7 @@ public class Mailing {
     @Id
     @Column(name = "mailing_id")
     @NotNull
-    private Long packId;
+    private Long mailingId;
     @Enumerated(EnumType.STRING)
     private Type type;
     @ManyToOne
