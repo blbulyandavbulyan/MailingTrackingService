@@ -1,4 +1,4 @@
-package com.blbulyandavbulyan.PackTrackingService;
+package com.blbulyandavbulyan.packtrackingservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

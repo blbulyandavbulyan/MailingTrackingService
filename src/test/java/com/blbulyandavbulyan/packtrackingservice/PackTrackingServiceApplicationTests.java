@@ -1,4 +1,4 @@
-package com.blbulyandavbulyan.PackTrackingService;
+package com.blbulyandavbulyan.packtrackingservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
