@@ -20,6 +20,7 @@ public class Mailing {
     @JoinColumn(name = "receiver_id")
     private Receiver receiver;
     @ManyToOne
-    @JoinColumn(name = "postal_office_id")
-    public PostalOffice postalOffice;
+    @JoinColumn(name = "destination_po_id")
+    public PostalOffice destinationPostalOffice;
+
 }
