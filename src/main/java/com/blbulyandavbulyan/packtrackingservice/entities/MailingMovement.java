@@ -11,7 +11,7 @@ import java.time.ZonedDateTime;
 @Table(name = "mailing_movements")
 @Getter
 @Setter
-public class MailingMoving {
+public class MailingMovement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "route_unit_id")

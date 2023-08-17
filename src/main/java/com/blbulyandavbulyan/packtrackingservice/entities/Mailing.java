@@ -26,5 +26,5 @@ public class Mailing {
     @JoinColumn(name = "destination_po_id")
     private PostalOffice destinationPostalOffice;
     @OneToMany(mappedBy = "mailing")
-    private List<MailingMoving> mailingMovings;
+    private List<MailingMovement> mailingMovements;
 }
