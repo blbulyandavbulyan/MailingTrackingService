@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.blbulyandavbulyan</groupId>
-	<artifactId>PackTrackingService</artifactId>
+	<artifactId>MailingTrackingService</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>PackTrackingService</name>
 	<description>This is solution for job task</description>
