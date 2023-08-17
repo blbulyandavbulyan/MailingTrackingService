@@ -17,7 +17,7 @@ public class Mailing {
     @Enumerated(EnumType.STRING)
     private Type type;
     @ManyToOne
-    @JoinTable(name = "mailings_receivers")
+    @JoinColumn(name = "receiver_id")
     private Receiver receiver;
     @ManyToOne
     @JoinColumn(name = "postal_office_id")
