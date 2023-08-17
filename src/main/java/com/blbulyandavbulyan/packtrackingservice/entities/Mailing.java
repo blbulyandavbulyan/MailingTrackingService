@@ -21,6 +21,6 @@ public class Mailing {
     private Receiver receiver;
     @ManyToOne
     @JoinColumn(name = "destination_po_id")
-    public PostalOffice destinationPostalOffice;
+    private PostalOffice destinationPostalOffice;
 
 }
