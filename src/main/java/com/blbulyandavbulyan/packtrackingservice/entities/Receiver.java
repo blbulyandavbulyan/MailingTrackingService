@@ -18,4 +18,7 @@ public class Receiver {
     private Long receiverId;
     private String name;
     private String address;
+    @ManyToOne
+    @JoinColumn(name = "postal_office_id")
+    private PostalOffice postalOffice;
 }
