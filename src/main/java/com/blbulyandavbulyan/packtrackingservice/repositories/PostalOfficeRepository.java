@@ -1,4 +1,4 @@
-package com.blbulyandavbulyan.packtrackingservice.services;
+package com.blbulyandavbulyan.packtrackingservice.repositories;
 
 import com.blbulyandavbulyan.packtrackingservice.entities.PostalOffice;
 import org.springframework.data.jpa.repository.JpaRepository;
