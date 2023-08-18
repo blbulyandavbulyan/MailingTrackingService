@@ -1,4 +1,8 @@
 package com.blbulyandavbulyan.packtrackingservice.dtos;
 
-public record MailingInfoDTO(Long movementId, Long mailingId, Long postalOfficeId) {
+import com.blbulyandavbulyan.packtrackingservice.entities.Mailing;
+
+import java.util.List;
+
+public record MailingInfoDTO(Long mailingId, Mailing.Type type, Mailing.Status status, List<MovementDTO> movements) {
 }
