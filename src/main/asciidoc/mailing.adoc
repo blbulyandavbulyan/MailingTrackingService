@@ -29,4 +29,13 @@ include::{snippets}/Getting info about mailing/response-body.adoc[]
 .response fields
 include::{snippets}/Getting info about mailing/response-fields.adoc[]
 ==== When mailing with given id doesn't exist
-todo
+
+.request
+include::{snippets}/Getting info for not existing mailing/http-request.adoc[]
+.response
+include::{snippets}/Getting info for not existing mailing/http-response.adoc[]
+.response body
+include::{snippets}/Getting info for not existing mailing/response-body.adoc[]
+.response fields
+
+include::{snippets}/Getting info for not existing mailing/response-fields.adoc[]
