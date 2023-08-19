@@ -1,8 +1,11 @@
 package com.blbulyandavbulyan.packtrackingservice.services;
 
 import com.blbulyandavbulyan.packtrackingservice.dtos.MailingDTO;
+import com.blbulyandavbulyan.packtrackingservice.dtos.MailingInfoDTO;
+import com.blbulyandavbulyan.packtrackingservice.dtos.MovementDTO;
 import com.blbulyandavbulyan.packtrackingservice.dtos.ReceiverDTO;
 import com.blbulyandavbulyan.packtrackingservice.entities.Mailing;
+import com.blbulyandavbulyan.packtrackingservice.entities.MailingMovement;
 import com.blbulyandavbulyan.packtrackingservice.entities.PostalOffice;
 import com.blbulyandavbulyan.packtrackingservice.entities.Receiver;
 import com.blbulyandavbulyan.packtrackingservice.exceptions.MailingNotFoundException;
@@ -17,7 +20,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -94,5 +102,58 @@ public class MailingServiceTest {
         Long mailingId = 1L;
         Mockito.when(mailingRepository.findById(mailingId)).thenReturn(Optional.empty());
         assertThrows(MailingNotFoundException.class, ()->mailingService.getById(mailingId));
+    }
+    @Test
+    @DisplayName("get info test when mailing exists")
+    public void testGetInfoWhenMailingExists(){
+        Mailing mailing = new Mailing();
+        mailing.setMailingId(1L);
+        mailing.setType(Mailing.Type.LETTER);
+        mailing.setStatus(Mailing.Status.ON_THE_WAY);
+        List<MailingMovement> movements = new ArrayList<>();
+        mailing.setMailingMovements(movements);
+        {
+            MailingMovement mailingMovement = new MailingMovement();
+            mailingMovement.setMailing(mailing);
+            mailingMovement.setMovementId(1L);
+            mailingMovement.setPostalOffice(new PostalOffice());
+            mailingMovement.setArrivalDateTime(ZonedDateTime.now());
+            mailingMovement.setDepartureDateTime(ZonedDateTime.now().plusHours(1));
+            movements.add(mailingMovement);
+        }
+        {
+            MailingMovement mailingMovement = new MailingMovement();
+            mailingMovement.setMailing(mailing);
+            mailingMovement.setMovementId(2L);
+            mailingMovement.setPostalOffice(new PostalOffice());
+            mailingMovement.setArrivalDateTime(ZonedDateTime.now().plusHours(2));
+            mailingMovement.setDepartureDateTime(ZonedDateTime.now().plusHours(3));
+            movements.add(mailingMovement);
+        }
+        {
+            MailingMovement mailingMovement = new MailingMovement();
+            mailingMovement.setMailing(mailing);
+            mailingMovement.setMovementId(2L);
+            mailingMovement.setPostalOffice(new PostalOffice());
+            mailingMovement.setArrivalDateTime(ZonedDateTime.now().plusHours(4));
+            movements.add(mailingMovement);
+        }
+        {
+            Receiver receiver = new Receiver();
+            receiver.setPostalOffice(new PostalOffice());
+            receiver.setName("Андрей");
+            receiver.setAddress("какой-то адрес");
+            mailing.setReceiver(receiver);
+        }
+        Mockito.when(mailingRepository.findById(mailing.getMailingId())).thenReturn(Optional.of(mailing));
+        MailingInfoDTO mailingInfo = mailingService.getInfo(mailing.getMailingId());
+        assertNotNull(mailingInfo);
+        assertEquals(mailing.getMailingId(), mailingInfo.mailingId(), "id not equals");
+        assertEquals(mailing.getType(), mailingInfo.type(), "type not equals");
+        assertEquals(mailing.getStatus(), mailingInfo.status(), "status not equals");
+        assertNotNull(mailingInfo.movements());
+        Set<MovementDTO> expectedMovemnts = movements.stream().map(mailingMovement -> new MovementDTO(mailingMovement.getMovementId(), mailingMovement.getMailing().getMailingId(), mailingMovement.getArrivalDateTime(), mailingMovement.getDepartureDateTime())).collect(Collectors.toSet());
+        assertTrue(expectedMovemnts.containsAll(mailingInfo.movements()));
+        assertEquals(movements.size(), mailingInfo.movements().size());
     }
 }
