@@ -104,7 +104,7 @@ public class MailingServiceTest {
         assertThrows(MailingNotFoundException.class, ()->mailingService.getById(mailingId));
     }
     @Test
-    @DisplayName("get info test when mailing exists")
+    @DisplayName("get info when mailing exists")
     public void testGetInfoWhenMailingExists(){
         Mailing mailing = new Mailing();
         mailing.setMailingId(1L);
@@ -152,8 +152,8 @@ public class MailingServiceTest {
         assertEquals(mailing.getType(), mailingInfo.type(), "type not equals");
         assertEquals(mailing.getStatus(), mailingInfo.status(), "status not equals");
         assertNotNull(mailingInfo.movements());
-        Set<MovementDTO> expectedMovemnts = movements.stream().map(mailingMovement -> new MovementDTO(mailingMovement.getMovementId(), mailingMovement.getMailing().getMailingId(), mailingMovement.getArrivalDateTime(), mailingMovement.getDepartureDateTime())).collect(Collectors.toSet());
-        assertTrue(expectedMovemnts.containsAll(mailingInfo.movements()));
+        Set<MovementDTO> expectedMovements = movements.stream().map(mailingMovement -> new MovementDTO(mailingMovement.getMovementId(), mailingMovement.getMailing().getMailingId(), mailingMovement.getArrivalDateTime(), mailingMovement.getDepartureDateTime())).collect(Collectors.toSet());
+        assertTrue(expectedMovements.containsAll(mailingInfo.movements()));
         assertEquals(movements.size(), mailingInfo.movements().size());
     }
 }
