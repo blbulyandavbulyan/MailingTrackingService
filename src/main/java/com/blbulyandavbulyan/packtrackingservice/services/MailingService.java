@@ -45,7 +45,7 @@ public class MailingService {
     }
 
     public Mailing getById(Long mailingId) {
-        return mailingRepository.findById(mailingId).orElseThrow();
+        return mailingRepository.findById(mailingId).orElseThrow(() -> new MailingNotFoundException("Отправление с id " + mailingId + " не найдено!"));
     }
 
     public void save(Mailing mailing) {
