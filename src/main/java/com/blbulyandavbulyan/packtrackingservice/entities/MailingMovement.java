@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.Instant;
 import java.time.ZonedDateTime;
 
 @Entity
@@ -23,6 +24,6 @@ public class MailingMovement {
     @JoinColumn(name = "postal_office_id")
     private PostalOffice postalOffice;
     @CreationTimestamp
-    private ZonedDateTime arrivalDateTime;
-    private ZonedDateTime departureDateTime;
+    private Instant arrivalDateTime;
+    private Instant departureDateTime;
 }

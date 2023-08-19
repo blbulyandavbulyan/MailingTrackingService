@@ -73,9 +73,9 @@ public class MailingControllerTest {
     public void testGettingInfoAboutMailing() throws Exception {
         MailingInfoDTO mailingInfoDTO = new MailingInfoDTO(1L, Mailing.Type.LETTER, Mailing.Status.ON_THE_WAY,
                 List.of(
-                        new MovementDTO(1L, 1L, ZonedDateTime.now(), ZonedDateTime.now().plusHours(1)),
-                        new MovementDTO(2L, 1L, ZonedDateTime.now().plusHours(2), ZonedDateTime.now().plusHours(3)),
-                        new MovementDTO(3L, 1L, ZonedDateTime.now().plusHours(4), null)
+                        new MovementDTO(1L, 1L, ZonedDateTime.now().toInstant(), ZonedDateTime.now().plusHours(1).toInstant()),
+                        new MovementDTO(2L, 1L, ZonedDateTime.now().plusHours(2).toInstant(), ZonedDateTime.now().plusHours(3).toInstant()),
+                        new MovementDTO(3L, 1L, ZonedDateTime.now().plusHours(4).toInstant(), null)
                 )
 
         );

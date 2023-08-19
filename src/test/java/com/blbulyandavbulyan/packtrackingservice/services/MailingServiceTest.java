@@ -117,8 +117,8 @@ public class MailingServiceTest {
             mailingMovement.setMailing(mailing);
             mailingMovement.setMovementId(1L);
             mailingMovement.setPostalOffice(new PostalOffice());
-            mailingMovement.setArrivalDateTime(ZonedDateTime.now());
-            mailingMovement.setDepartureDateTime(ZonedDateTime.now().plusHours(1));
+            mailingMovement.setArrivalDateTime(ZonedDateTime.now().toInstant());
+            mailingMovement.setDepartureDateTime(ZonedDateTime.now().plusHours(1).toInstant());
             movements.add(mailingMovement);
         }
         {
@@ -126,8 +126,8 @@ public class MailingServiceTest {
             mailingMovement.setMailing(mailing);
             mailingMovement.setMovementId(2L);
             mailingMovement.setPostalOffice(new PostalOffice());
-            mailingMovement.setArrivalDateTime(ZonedDateTime.now().plusHours(2));
-            mailingMovement.setDepartureDateTime(ZonedDateTime.now().plusHours(3));
+            mailingMovement.setArrivalDateTime(ZonedDateTime.now().plusHours(2).toInstant());
+            mailingMovement.setDepartureDateTime(ZonedDateTime.now().plusHours(3).toInstant());
             movements.add(mailingMovement);
         }
         {
@@ -135,7 +135,7 @@ public class MailingServiceTest {
             mailingMovement.setMailing(mailing);
             mailingMovement.setMovementId(2L);
             mailingMovement.setPostalOffice(new PostalOffice());
-            mailingMovement.setArrivalDateTime(ZonedDateTime.now().plusHours(4));
+            mailingMovement.setArrivalDateTime(ZonedDateTime.now().plusHours(4).toInstant());
             movements.add(mailingMovement);
         }
         {

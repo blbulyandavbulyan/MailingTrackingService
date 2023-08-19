@@ -44,7 +44,7 @@ public class MovementService {
         if(mailingMovement.getDepartureDateTime() != null)//бросаем исключение о том что это перемещение уже закрыто
             throw new RuntimeException();
         else{
-            mailingMovement.setDepartureDateTime(ZonedDateTime.now());
+            mailingMovement.setDepartureDateTime(ZonedDateTime.now().toInstant());
             Long currentIndex = mailingMovement.getPostalOffice().getIndex();
             Mailing mailing = mailingMovement.getMailing();
             Receiver receiver = mailing.getReceiver();
