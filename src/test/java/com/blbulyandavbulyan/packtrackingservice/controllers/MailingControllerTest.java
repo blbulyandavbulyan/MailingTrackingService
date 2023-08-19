@@ -58,7 +58,7 @@ public class MailingControllerTest {
                 post("/api/v1/mailings").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(mailingDTO))
         ).andExpect(status().isCreated()).andDo(
-                document("Create new mailing",
+                document("Successful create new mailing",
                         requestFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("Identifier of mailing"),
                                 mailingTypeField,
