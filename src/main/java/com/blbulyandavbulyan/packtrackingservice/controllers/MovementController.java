@@ -14,7 +14,7 @@ public class MovementController {
     private MovementService movementService;
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public MovementCreatedDTO create(@RequestParam("mailingId") Long mailingId, @RequestParam("officeIndex") Long officeIndex){
+    public MovementCreatedDTO create(@RequestParam("mailing_id") Long mailingId, @RequestParam("office_index") Long officeIndex){
         return movementService.create(mailingId, officeIndex);
     }
     @PatchMapping("/{movementId}")
