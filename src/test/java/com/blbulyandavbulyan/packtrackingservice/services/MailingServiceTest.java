@@ -5,6 +5,7 @@ import com.blbulyandavbulyan.packtrackingservice.dtos.ReceiverDTO;
 import com.blbulyandavbulyan.packtrackingservice.entities.Mailing;
 import com.blbulyandavbulyan.packtrackingservice.entities.PostalOffice;
 import com.blbulyandavbulyan.packtrackingservice.entities.Receiver;
+import com.blbulyandavbulyan.packtrackingservice.exceptions.MailingNotFoundException;
 import com.blbulyandavbulyan.packtrackingservice.exceptions.PostalOfficeNotFoundException;
 import com.blbulyandavbulyan.packtrackingservice.repositories.MailingRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +16,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -75,5 +78,21 @@ public class MailingServiceTest {
         assertEquals(expected.getType(), actual.getType());
         assertEquals(expected.getStatus(), actual.getStatus());
         assertEquals(expected.getReceiver(), actual.getReceiver());
+    }
+    @Test
+    @DisplayName("get by id when mailing exists")
+    public void getByIdForExistingMailing(){
+        Long mailingId = 1L;
+        Mailing expected = new Mailing();
+        Mockito.when(mailingRepository.findById(mailingId)).thenReturn(Optional.of(expected));
+        Mailing actual = mailingService.getById(mailingId);
+        assertEquals(expected, actual);
+    }
+    @Test
+    @DisplayName("get by id when mailing doesn't exist")
+    public void getByIdWhenMailingNotExist(){
+        Long mailingId = 1L;
+        Mockito.when(mailingRepository.findById(mailingId)).thenReturn(Optional.empty());
+        assertThrows(MailingNotFoundException.class, ()->mailingService.getById(mailingId));
     }
 }
