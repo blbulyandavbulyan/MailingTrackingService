@@ -14,7 +14,7 @@ public class PostalOffice {
     @Column(name = "postal_index", nullable = false)
     private Long index;
     @NotBlank
-    private String name;
+    private String title;
     @NotBlank
     private String address;
 }
