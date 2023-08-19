@@ -1,18 +1,22 @@
 === Creation mailing
-==== If mailing with given id doesn't exist
 
 '''
 include::{snippets}/Successful create new mailing/curl-request.adoc[]
 '''
 .request
 include::{snippets}/Successful create new mailing/http-request.adoc[]
-
-.response
-include::{snippets}/Successful create new mailing/http-response.adoc[]
 .request fields
 include::{snippets}/Successful create new mailing/request-fields.adoc[]
 ==== If mailing with given id exists
-todo
+.response
+include::{snippets}/Successful create new mailing/http-response.adoc[]
+==== If mailing with given id doesn't exist
+.response
+include::{snippets}/create new mailing if it already exists/http-response.adoc[]
+.response body
+include::{snippets}/create new mailing if it already exists/response-body.adoc[]
+.response fields
+include::{snippets}/create new mailing if it already exists/response-fields.adoc[]
 
 === Getting info about mailing
 include::{snippets}/Getting info about mailing/path-parameters.adoc[]
