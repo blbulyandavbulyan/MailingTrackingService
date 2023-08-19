@@ -5,8 +5,10 @@ import com.blbulyandavbulyan.packtrackingservice.dtos.MailingInfoDTO;
 import com.blbulyandavbulyan.packtrackingservice.dtos.MovementDTO;
 import com.blbulyandavbulyan.packtrackingservice.dtos.ReceiverDTO;
 import com.blbulyandavbulyan.packtrackingservice.entities.Mailing;
+import com.blbulyandavbulyan.packtrackingservice.exceptions.MailingNotFoundException;
 import com.blbulyandavbulyan.packtrackingservice.services.MailingService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -15,12 +17,15 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -32,8 +37,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.snippet.Attributes.key;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
@@ -47,6 +51,11 @@ public class MailingControllerTest {
     @MockBean
     private MailingService mailingService;
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ResponseFieldsSnippet errorSnippet = responseFields(
+            fieldWithPath("status").type(JsonFieldType.NUMBER).description("http status of error"),
+            fieldWithPath("timestamp").type(JsonFieldType.STRING).description("timestamp, when error happened"),
+            fieldWithPath("message").type(JsonFieldType.STRING).description("Message, which describes the error")
+    );
     private final FieldDescriptor mailingTypeField = fieldWithPath("type").description("The type of the letter").attributes(
             key("constraints").value("Must be one of: LETTER, PACKAGE, WRAPPER, POSTCARD")
     );
@@ -72,6 +81,7 @@ public class MailingControllerTest {
     }
 
     @Test
+    @DisplayName("getting info when mailing exist")
     public void testGettingInfoAboutMailing() throws Exception {
         MailingInfoDTO mailingInfoDTO = new MailingInfoDTO(1L, Mailing.Type.LETTER, Mailing.Status.ON_THE_WAY,
                 List.of(
@@ -107,4 +117,22 @@ public class MailingControllerTest {
         Mockito.verify(mailingService, Mockito.times(1)).getInfo(mailingInfoDTO.mailingId());
     }
 
+    @Test
+    @DisplayName("getting info when mailing doesn't exist")
+    public void testGettingInfoForNotExistingMailing() throws Exception {
+        Long mailingId = 1L;
+        Mockito.when(mailingService.getById(mailingId)).thenThrow(MailingNotFoundException.class);
+        mockMvc.perform(get("/api/v1/mailings/{id}", mailingId))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("statusCode").value(HttpStatus.NOT_FOUND.value()))
+                .andExpect(jsonPath("timestamp").isNotEmpty())
+                .andExpect(jsonPath("message").isString())
+                .andExpect(jsonPath("message").isNotEmpty())
+                .andDo(document(
+                                "Getting info for not existing mailing",
+                                errorSnippet
+                        )
+                );
+    }
 }
