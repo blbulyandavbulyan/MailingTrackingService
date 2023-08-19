@@ -44,14 +44,14 @@ public class MailingControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private MailingService mailingService;
-    private ObjectMapper objectMapper = new ObjectMapper();
-    private FieldDescriptor mailingTypeField = fieldWithPath("type").description("The type of the letter").attributes(
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final FieldDescriptor mailingTypeField = fieldWithPath("type").description("The type of the letter").attributes(
             key("constraints").value("Must be one of: LETTER, PACKAGE, WRAPPER, POSTCARD")
     );
 
     @Test
     public void testCreateMailing() throws Exception {
-        MailingDTO mailingDTO = new MailingDTO(1L, Mailing.Type.LETTER, new ReceiverDTO(324456, "Unknown", "Somewhere"));
+        MailingDTO mailingDTO = new MailingDTO(1L, Mailing.Type.LETTER, new ReceiverDTO(324456L, "Unknown", "Somewhere"));
         mockMvc.perform(
                 post("/api/v1/mailings").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(mailingDTO))

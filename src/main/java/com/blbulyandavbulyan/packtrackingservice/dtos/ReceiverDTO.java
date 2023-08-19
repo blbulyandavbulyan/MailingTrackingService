@@ -1,4 +1,4 @@
 package com.blbulyandavbulyan.packtrackingservice.dtos;
 
-public record ReceiverDTO(Integer index, String name, String address) {
+public record ReceiverDTO(Long index, String name, String address) {
 }
