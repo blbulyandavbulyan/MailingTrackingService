@@ -5,6 +5,7 @@ import com.blbulyandavbulyan.packtrackingservice.dtos.MailingInfoDTO;
 import com.blbulyandavbulyan.packtrackingservice.dtos.MovementDTO;
 import com.blbulyandavbulyan.packtrackingservice.dtos.ReceiverDTO;
 import com.blbulyandavbulyan.packtrackingservice.entities.Mailing;
+import com.blbulyandavbulyan.packtrackingservice.exceptions.MailingAlreadyExistsException;
 import com.blbulyandavbulyan.packtrackingservice.exceptions.MailingNotFoundException;
 import com.blbulyandavbulyan.packtrackingservice.services.MailingService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,7 +26,6 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -61,6 +61,7 @@ public class MailingControllerTest {
     );
 
     @Test
+    @DisplayName("create mailing when everything is ok")
     public void testCreateMailing() throws Exception {
         MailingDTO mailingDTO = new MailingDTO(1L, Mailing.Type.LETTER, new ReceiverDTO(324456L, "Unknown", "Somewhere"));
         mockMvc.perform(
@@ -109,9 +110,7 @@ public class MailingControllerTest {
                                         fieldWithPath("movements[].arrivalDateTime").type(JsonFieldType.STRING).description("The arrival time of the mailing"),
                                         fieldWithPath("movements[].departureDateTime").type(JsonFieldType.STRING).optional().description("The departure time of the mailing")
                                 ),
-                                pathParameters(
-                                        parameterWithName("id").description("The id of the mailing, which info will be got")
-                                )
+                                pathParameters(parameterWithName("id").description("The id of the mailing, which info will be got"))
                         )
                 );
         Mockito.verify(mailingService, Mockito.times(1)).getInfo(mailingInfoDTO.mailingId());
@@ -121,7 +120,7 @@ public class MailingControllerTest {
     @DisplayName("getting info when mailing doesn't exist")
     public void testGettingInfoForNotExistingMailing() throws Exception {
         Long mailingId = 1L;
-        Mockito.when(mailingService.getInfo(mailingId)).then((invocation)->{
+        Mockito.when(mailingService.getInfo(mailingId)).then((invocation) -> {
             throw new MailingNotFoundException("Mailing with id " + mailingId + " not found!", HttpStatus.NOT_FOUND);
         });
         mockMvc.perform(get("/api/v1/mailings/{id}", mailingId))
@@ -131,10 +130,25 @@ public class MailingControllerTest {
                 .andExpect(jsonPath("timestamp").isNotEmpty())
                 .andExpect(jsonPath("message").isString())
                 .andExpect(jsonPath("message").isNotEmpty())
-                .andDo(document(
-                                "Getting info for not existing mailing",
-                                errorSnippet
-                        )
-                );
+                .andDo(document("Getting info for not existing mailing", errorSnippet));
+        Mockito.verify(mailingService, Mockito.only()).getInfo(mailingId);
+    }
+
+    @Test
+    @DisplayName("create mailing when mailing with this id exists")
+    public void testCreateMailingWhenMailingWithThisIdExists() throws Exception {
+        MailingDTO mailingDTO = new MailingDTO(1L, Mailing.Type.LETTER, new ReceiverDTO(324456L, "Unknown", "Somewhere"));
+        Mockito.doAnswer((invocationOnMock -> {
+            throw new MailingAlreadyExistsException("Mailing with id " + mailingDTO.id() + " already exists!", HttpStatus.BAD_REQUEST);
+        })).when(mailingService).create(mailingDTO);
+        mockMvc.perform(post("/api/v1/mailings").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(mailingDTO)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("statusCode").value(HttpStatus.BAD_REQUEST.value()))
+                .andExpect(jsonPath("timestamp").isNotEmpty())
+                .andExpect(jsonPath("message").isString())
+                .andExpect(jsonPath("message").isNotEmpty())
+                .andDo(document("create new mailing if it already exists", errorSnippet));
+        Mockito.verify(mailingService, Mockito.times(1)).create(mailingDTO);
     }
 }
