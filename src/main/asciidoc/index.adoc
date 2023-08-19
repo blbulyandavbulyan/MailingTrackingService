@@ -1,0 +1,4 @@
+= Mailing Tracking Service
+
+== Working with mailings:
+include::mailing.adoc[]
