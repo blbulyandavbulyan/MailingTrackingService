@@ -2,6 +2,7 @@ package com.blbulyandavbulyan.packtrackingservice.services;
 
 import com.blbulyandavbulyan.packtrackingservice.dtos.MailingDTO;
 import com.blbulyandavbulyan.packtrackingservice.dtos.MailingInfoDTO;
+import com.blbulyandavbulyan.packtrackingservice.dtos.MovementDTO;
 import com.blbulyandavbulyan.packtrackingservice.dtos.ReceiverDTO;
 import com.blbulyandavbulyan.packtrackingservice.entities.Mailing;
 import com.blbulyandavbulyan.packtrackingservice.entities.Receiver;
@@ -33,8 +34,16 @@ public class MailingService {
     }
 
     public MailingInfoDTO getInfo(Long mailingId) {
-        // TODO: 17.08.2023 Реализовать метод получения информации об отправлении
-        throw new UnsupportedOperationException();
+        Mailing mailing = mailingRepository.findById(mailingId).orElseThrow(()-> new MailingNotFoundException("Отправление с id " + mailingId + " не найдено!"));
+        return new MailingInfoDTO(
+                mailing.getMailingId(), mailing.getType(), mailing.getStatus(),
+                mailing.getMailingMovements().stream().map(
+                        mailingMovement -> new MovementDTO(
+                                mailingMovement.getMovementId(), mailingMovement.getMailing().getMailingId(),
+                                mailingMovement.getArrivalDateTime(), mailingMovement.getDepartureDateTime()
+                        )
+                ).toList()
+        );
     }
 
     public void setDeliveredStatus(Long mailingId) {
