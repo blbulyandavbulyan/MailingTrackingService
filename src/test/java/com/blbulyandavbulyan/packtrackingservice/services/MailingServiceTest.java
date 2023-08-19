@@ -58,4 +58,22 @@ public class MailingServiceTest {
         assertThrows(PostalOfficeNotFoundException.class, ()->mailingService.create(mailingDTO));
         Mockito.verify(mailingRepository, Mockito.never()).save(Mockito.any());
     }
+    @Test
+    @DisplayName("save mailing test")
+    public void saveMailing(){
+        Mailing expected = new Mailing();
+        expected.setStatus(Mailing.Status.ON_THE_WAY);
+        expected.setType(Mailing.Type.LETTER);
+        Receiver receiver = new Receiver();
+        receiver.setName("Анатолий");
+        receiver.setAddress("улица Ленина");
+        expected.setReceiver(receiver);
+        mailingService.save(expected);
+        ArgumentCaptor<Mailing> mailingArgumentCaptor = ArgumentCaptor.forClass(Mailing.class);
+        Mockito.verify(mailingRepository, Mockito.only()).save(mailingArgumentCaptor.capture());
+        Mailing actual = mailingArgumentCaptor.getValue();
+        assertEquals(expected.getType(), actual.getType());
+        assertEquals(expected.getStatus(), actual.getStatus());
+        assertEquals(expected.getReceiver(), actual.getReceiver());
+    }
 }
