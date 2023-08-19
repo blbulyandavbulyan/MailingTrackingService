@@ -10,6 +10,7 @@ import com.blbulyandavbulyan.packtrackingservice.exceptions.MailingNotFoundExcep
 import com.blbulyandavbulyan.packtrackingservice.exceptions.PostalOfficeNotFoundException;
 import com.blbulyandavbulyan.packtrackingservice.repositories.MailingRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -30,11 +31,11 @@ public class MailingService {
             receiver.setPostalOffice(postalOfficeService.getReferenceById(receiverDTO.index()));
             mailingRepository.save(mailing);
         }
-        else throw new PostalOfficeNotFoundException("Нет почтового офиса с index " + receiverDTO.index());
+        else throw new PostalOfficeNotFoundException("Нет почтового офиса с индексом " + receiverDTO.index(), HttpStatus.BAD_REQUEST);
     }
 
     public MailingInfoDTO getInfo(Long mailingId) {
-        Mailing mailing = mailingRepository.findById(mailingId).orElseThrow(()-> new MailingNotFoundException("Отправление с id " + mailingId + " не найдено!"));
+        Mailing mailing = mailingRepository.findById(mailingId).orElseThrow(()-> new MailingNotFoundException("Отправление с id " + mailingId + " не найдено!", HttpStatus.NOT_FOUND));
         return new MailingInfoDTO(
                 mailing.getMailingId(), mailing.getType(), mailing.getStatus(),
                 mailing.getMailingMovements().stream().map(
@@ -50,11 +51,12 @@ public class MailingService {
         if(mailingRepository.existsById(mailingId)){
             mailingRepository.updateStatusById(mailingId, Mailing.Status.DELIVERED);
         }
-        else throw new MailingNotFoundException("Отправление с id " + mailingId + " не найдено!");
+        else throw new MailingNotFoundException("Отправление с id " + mailingId + " не найдено!", HttpStatus.BAD_REQUEST);
     }
 
     public Mailing getById(Long mailingId) {
-        return mailingRepository.findById(mailingId).orElseThrow(() -> new MailingNotFoundException("Отправление с id " + mailingId + " не найдено!"));
+        // TODO: 19.08.2023 Возможно понадобится возвращать отсюда optional, чтобы те кто используют сервис сами решали что делать с пустым optional
+        return mailingRepository.findById(mailingId).orElseThrow(() -> new MailingNotFoundException("Отправление с id " + mailingId + " не найдено!", HttpStatus.BAD_REQUEST));
     }
 
     public void save(Mailing mailing) {
