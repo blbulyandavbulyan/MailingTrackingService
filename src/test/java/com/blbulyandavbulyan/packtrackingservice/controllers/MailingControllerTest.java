@@ -121,7 +121,9 @@ public class MailingControllerTest {
     @DisplayName("getting info when mailing doesn't exist")
     public void testGettingInfoForNotExistingMailing() throws Exception {
         Long mailingId = 1L;
-        Mockito.when(mailingService.getById(mailingId)).thenThrow(MailingNotFoundException.class);
+        Mockito.when(mailingService.getInfo(mailingId)).then((invocation)->{
+            throw new MailingNotFoundException("Mailing with id " + mailingId + " not found!", HttpStatus.NOT_FOUND);
+        });
         mockMvc.perform(get("/api/v1/mailings/{id}", mailingId))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
