@@ -12,4 +12,8 @@ public class PostalOfficeService {
     public PostalOffice getReferenceById(Long officeIndex) {
         return null;
     }
+
+    public boolean existByIndex(Long index) {
+        return postalOfficeRepository.existsById(index);
+    }
 }
