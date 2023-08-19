@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class PostalOfficeService {
     private PostalOfficeRepository postalOfficeRepository;
     public PostalOffice getReferenceById(Long officeIndex) {
-        return null;
+        return postalOfficeRepository.getReferenceById(officeIndex);
     }
 
     public boolean existByIndex(Long index) {
