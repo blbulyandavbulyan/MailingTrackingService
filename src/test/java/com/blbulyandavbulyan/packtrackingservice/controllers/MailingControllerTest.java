@@ -52,7 +52,7 @@ public class MailingControllerTest {
     private MailingService mailingService;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final ResponseFieldsSnippet errorSnippet = responseFields(
-            fieldWithPath("status").type(JsonFieldType.NUMBER).description("http status of error"),
+            fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("http status of error"),
             fieldWithPath("timestamp").type(JsonFieldType.STRING).description("timestamp, when error happened"),
             fieldWithPath("message").type(JsonFieldType.STRING).description("Message, which describes the error")
     );
