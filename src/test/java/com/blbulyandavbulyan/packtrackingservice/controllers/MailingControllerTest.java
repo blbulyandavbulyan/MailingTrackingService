@@ -172,7 +172,7 @@ public class MailingControllerTest {
     public void updateDeliveredStatusWhenMailingDoesNotExist() throws Exception {
         Long mailingId = 1L;
         Mockito.doAnswer((invocationOnMock -> {
-            throw new MailingAlreadyExistsException("Mailing with id " + mailingId + " already exists!", HttpStatus.BAD_REQUEST);
+            throw new MailingNotFoundException("Mailing with id " + mailingId + " not found!", HttpStatus.BAD_REQUEST);
         })).when(mailingService).setDeliveredStatus(mailingId);
         mockMvc.perform(patch("/api/v1/mailings/{id}/delivered", mailingId))
                 .andExpect(status().isBadRequest())
@@ -181,6 +181,7 @@ public class MailingControllerTest {
                         errorSnippet,
                         pathParameters(parameterWithName("id").description("The id of the mailing, which status will be set to delivered")))
                 );
+        Mockito.verify(mailingService, Mockito.only()).setDeliveredStatus(mailingId);
     }
     @Test
     @DisplayName("updating delivered status when mailing is already delivered")
@@ -196,5 +197,6 @@ public class MailingControllerTest {
                         errorSnippet,
                         pathParameters(parameterWithName("id").description("The id of the mailing, which status will be set to delivered")))
                 );
+        Mockito.verify(mailingService, Mockito.only()).setDeliveredStatus(mailingId);
     }
 }
