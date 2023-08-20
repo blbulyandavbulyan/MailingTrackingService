@@ -31,8 +31,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
@@ -151,4 +150,20 @@ public class MailingControllerTest {
                 .andDo(document("create new mailing if it already exists", errorSnippet));
         Mockito.verify(mailingService, Mockito.times(1)).create(mailingDTO);
     }
+
+    @Test
+    @DisplayName("test updating delivered status when mailing exists")
+    public void updateDeliveredStatus() throws Exception {
+        Long mailingId = 1L;
+        mockMvc.perform(patch("/api/v1/mailings/{id}/delivered", mailingId))
+                .andExpect(status().isOk())
+                .andDo(
+                        document(
+                                "update delivered status when ok",
+                                pathParameters(parameterWithName("id").description("The id of the mailing, which status will be set to delivered"))
+                        )
+                );
+        Mockito.verify(mailingService, Mockito.only()).setDeliveredStatus(mailingId);
+    }
+
 }
