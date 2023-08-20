@@ -43,3 +43,24 @@ include::{snippets}/Getting info for not existing mailing/response-body.adoc[]
 .response fields
 
 include::{snippets}/Getting info for not existing mailing/response-fields.adoc[]
+=== Updating delivered status
+.curl request
+include::{snippets}/update delivered status when ok/curl-request.adoc[]
+include::{snippets}/update delivered status when ok/path-parameters.adoc[]
+==== When mailing exists and not delivered
+.response
+include::{snippets}/update delivered status when ok/http-response.adoc[]
+==== When mailing does not exist
+.response
+include::{snippets}/update mailing status when mailing does not exists/http-response.adoc[]
+.response body
+include::{snippets}/update mailing status when mailing does not exists/response-body.adoc[]
+.response fields
+include::{snippets}/update mailing status when mailing does not exists/response-fields.adoc[]
+==== When mailing already delivered
+.response
+include::{snippets}/update mailing status when mailing already delivered/http-response.adoc[]
+.response body
+include::{snippets}/update mailing status when mailing already delivered/response-body.adoc[]
+.response fields
+include::{snippets}/update mailing status when mailing already delivered/response-fields.adoc[]
