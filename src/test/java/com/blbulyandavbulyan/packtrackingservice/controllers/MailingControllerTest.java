@@ -5,6 +5,7 @@ import com.blbulyandavbulyan.packtrackingservice.dtos.MailingInfoDTO;
 import com.blbulyandavbulyan.packtrackingservice.dtos.MovementDTO;
 import com.blbulyandavbulyan.packtrackingservice.dtos.ReceiverDTO;
 import com.blbulyandavbulyan.packtrackingservice.entities.Mailing;
+import com.blbulyandavbulyan.packtrackingservice.exceptions.MailingAlreadyDeliveredException;
 import com.blbulyandavbulyan.packtrackingservice.exceptions.MailingAlreadyExistsException;
 import com.blbulyandavbulyan.packtrackingservice.exceptions.MailingNotFoundException;
 import com.blbulyandavbulyan.packtrackingservice.services.MailingService;
@@ -166,4 +167,34 @@ public class MailingControllerTest {
         Mockito.verify(mailingService, Mockito.only()).setDeliveredStatus(mailingId);
     }
 
+    @Test
+    @DisplayName("updating delivered status when mailing doesn't exists")
+    public void updateDeliveredStatusWhenMailingDoesNotExist() throws Exception {
+        Long mailingId = 1L;
+        Mockito.doAnswer((invocationOnMock -> {
+            throw new MailingAlreadyExistsException("Mailing with id " + mailingId + " already exists!", HttpStatus.BAD_REQUEST);
+        })).when(mailingService).setDeliveredStatus(mailingId);
+        mockMvc.perform(patch("/api/v1/mailings/{id}/delivered", mailingId))
+                .andExpect(status().isBadRequest())
+                .andDo(document(
+                        "update mailing status when mailing does not exists",
+                        errorSnippet,
+                        pathParameters(parameterWithName("id").description("The id of the mailing, which status will be set to delivered")))
+                );
+    }
+    @Test
+    @DisplayName("updating delivered status when mailing is already delivered")
+    public void updateDeliveredStatusWhenMailingAlreadyDelivered() throws Exception {
+        Long mailingId = 1L;
+        Mockito.doAnswer((invocationOnMock -> {
+            throw new MailingAlreadyDeliveredException("Mailing with id " + mailingId + " already exists!");
+        })).when(mailingService).setDeliveredStatus(mailingId);
+        mockMvc.perform(patch("/api/v1/mailings/{id}/delivered", mailingId))
+                .andExpect(status().isBadRequest())
+                .andDo(document(
+                        "update mailing status when mailing already delivered",
+                        errorSnippet,
+                        pathParameters(parameterWithName("id").description("The id of the mailing, which status will be set to delivered")))
+                );
+    }
 }
