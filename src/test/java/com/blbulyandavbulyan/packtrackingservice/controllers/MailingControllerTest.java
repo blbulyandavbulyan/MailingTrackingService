@@ -152,7 +152,7 @@ public class MailingControllerTest {
     }
 
     @Test
-    @DisplayName("test updating delivered status when mailing exists")
+    @DisplayName("updating delivered status everything is ok")
     public void updateDeliveredStatus() throws Exception {
         Long mailingId = 1L;
         mockMvc.perform(patch("/api/v1/mailings/{id}/delivered", mailingId))
