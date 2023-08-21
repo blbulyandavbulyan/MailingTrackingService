@@ -105,7 +105,8 @@ public class MailingServiceTest {
     public void getByIdWhenMailingNotExist(){
         Long mailingId = 1L;
         Mockito.when(mailingRepository.findById(mailingId)).thenReturn(Optional.empty());
-        assertThrows(MailingNotFoundException.class, ()->mailingService.getById(mailingId));
+        var actualException = assertThrows(MailingNotFoundException.class, ()->mailingService.getById(mailingId));
+        assertEquals(HttpStatus.BAD_REQUEST, actualException.getHttpStatus());
     }
     @Test
     @DisplayName("get info when mailing exists")
