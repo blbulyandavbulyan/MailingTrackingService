@@ -4,6 +4,7 @@ import com.blbulyandavbulyan.packtrackingservice.dtos.MovementCreatedDTO;
 import com.blbulyandavbulyan.packtrackingservice.dtos.MovementDTO;
 import com.blbulyandavbulyan.packtrackingservice.entities.Mailing;
 import com.blbulyandavbulyan.packtrackingservice.entities.MailingMovement;
+import com.blbulyandavbulyan.packtrackingservice.exceptions.MailingAlreadyDeliveredException;
 import com.blbulyandavbulyan.packtrackingservice.repositories.MovementRepository;
 import jakarta.validation.ConstraintViolationException;
 import lombok.AllArgsConstructor;
@@ -34,7 +35,7 @@ public class MovementService {
                 throw new RuntimeException();//бросить исключение о том что не найден postalOffice
             }
         }
-        else throw new RuntimeException();//бросить исключение, что посылка уже доставлена
+        else throw new MailingAlreadyDeliveredException("Mailing with id " + mailingId + " is already delivered, can't create mailing movement!");//бросить исключение, что посылка уже доставлена
     }
     @Transactional
     public MailingMovement closeMovement(Long movementId) {
