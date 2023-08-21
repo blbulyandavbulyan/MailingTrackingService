@@ -1,6 +1,9 @@
 package com.blbulyandavbulyan.packtrackingservice.controllers;
 
 import com.blbulyandavbulyan.packtrackingservice.dtos.MovementCreatedDTO;
+import com.blbulyandavbulyan.packtrackingservice.entities.Mailing;
+import com.blbulyandavbulyan.packtrackingservice.entities.MailingMovement;
+import com.blbulyandavbulyan.packtrackingservice.entities.PostalOffice;
 import com.blbulyandavbulyan.packtrackingservice.services.MovementService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,12 +44,17 @@ public class MovementControllerTest {
     public void testCreateMovement() throws Exception {
         Long mailingId = 1L;
         Long officeIndex = 12345L;
-        MovementCreatedDTO movementCreatedDTO = new MovementCreatedDTO();
-        movementCreatedDTO.setMovementId(1L);
-        movementCreatedDTO.setMailingId(mailingId);
-        movementCreatedDTO.setPostalIndex(officeIndex);
-        movementCreatedDTO.setArrivalDateTime(Instant.now());
-        Mockito.when(movementService.create(mailingId, officeIndex)).thenReturn(movementCreatedDTO);
+        MailingMovement mailingMovement = new MailingMovement();
+        mailingMovement.setMovementId(1L);
+        Mailing mailing = new Mailing();
+        mailing.setType(Mailing.Type.LETTER);
+        mailing.setMailingId(mailingId);
+        PostalOffice postalOffice = new PostalOffice();
+        postalOffice.setIndex(officeIndex);
+        mailingMovement.setMailing(mailing);
+        mailingMovement.setPostalOffice(postalOffice);
+        mailingMovement.setArrivalDateTime(Instant.now());
+        Mockito.when(movementService.create(mailingId, officeIndex)).thenReturn(mailingMovement);
         mockMvc.perform(post("/api/v1/movements")
                         .param("mailing_id", mailingId.toString())
                         .param("office_index", officeIndex.toString())
@@ -55,8 +63,8 @@ public class MovementControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("mailingId").value(mailingId))
                 .andExpect(jsonPath("postalIndex").value(officeIndex))
-                .andExpect(jsonPath("movementId").value(movementCreatedDTO.getMovementId()))
-                .andExpect(jsonPath("arrivalDateTime").value(movementCreatedDTO.getArrivalDateTime().toString()))
+                .andExpect(jsonPath("movementId").value(mailingMovement.getMovementId()))
+                .andExpect(jsonPath("arrivalDateTime").value(mailingMovement.getArrivalDateTime().toString()))
                 .andDo(
                         document(
                                 "Create movement",
