@@ -48,4 +48,8 @@ public class MovementService {
             return modelMapper.map(mailingMovement, MovementDTO.class);
         }
     }
+
+    public void closeLastMovement(Long mailingId) {
+        movementRepository.updateDepartureDateTimeForLastMovement(mailingId, Instant.now());
+    }
 }
