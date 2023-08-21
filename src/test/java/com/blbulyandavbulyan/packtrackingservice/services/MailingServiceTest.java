@@ -8,6 +8,7 @@ import com.blbulyandavbulyan.packtrackingservice.entities.Mailing;
 import com.blbulyandavbulyan.packtrackingservice.entities.MailingMovement;
 import com.blbulyandavbulyan.packtrackingservice.entities.PostalOffice;
 import com.blbulyandavbulyan.packtrackingservice.entities.Receiver;
+import com.blbulyandavbulyan.packtrackingservice.exceptions.MailingAlreadyDeliveredException;
 import com.blbulyandavbulyan.packtrackingservice.exceptions.MailingNotFoundException;
 import com.blbulyandavbulyan.packtrackingservice.exceptions.PostalOfficeNotFoundException;
 import com.blbulyandavbulyan.packtrackingservice.repositories.MailingRepository;
@@ -19,6 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -28,6 +30,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 
 @ExtendWith(MockitoExtension.class)
 public class MailingServiceTest {
@@ -67,7 +71,7 @@ public class MailingServiceTest {
         MailingDTO mailingDTO = new MailingDTO(1L, Mailing.Type.LETTER, new ReceiverDTO(postalOfficeId, "Евгений", "какой-то адрес"));
         Mockito.when(postalOfficeService.existByIndex(postalOfficeId)).thenReturn(false);
         assertThrows(PostalOfficeNotFoundException.class, ()->mailingService.create(mailingDTO));
-        Mockito.verify(mailingRepository, Mockito.never()).save(Mockito.any());
+        Mockito.verify(mailingRepository, Mockito.never()).save(any());
     }
     @Test
     @DisplayName("save mailing test")
@@ -155,5 +159,34 @@ public class MailingServiceTest {
         Set<MovementDTO> expectedMovements = movements.stream().map(mailingMovement -> new MovementDTO(mailingMovement.getMovementId(), mailingMovement.getMailing().getMailingId(), mailingMovement.getArrivalDateTime(), mailingMovement.getDepartureDateTime())).collect(Collectors.toSet());
         assertTrue(expectedMovements.containsAll(mailingInfo.movements()));
         assertEquals(movements.size(), mailingInfo.movements().size());
+    }
+    @Test
+    @DisplayName("set delivered status when ok")
+    public void setDeliveredStatusWhenOk(){
+        Long mailingId = 1L;
+        Mockito.when(mailingRepository.getMailingStatus(mailingId)).thenReturn(Optional.of(Mailing.Status.ON_THE_WAY));
+        assertDoesNotThrow(()->mailingService.setDeliveredStatus(mailingId));
+        Mockito.verify(mailingRepository, Mockito.times(1)).getMailingStatus(mailingId);
+        Mockito.verify(mailingRepository, Mockito.times(1)).updateStatusById(mailingId, Mailing.Status.DELIVERED);
+    }
+    @Test
+    @DisplayName("set delivered status when mailing already delivered")
+    public void setDeliveredStatusWhenMailingAlreadyDelivered(){
+        Long mailingId = 1L;
+        Mockito.when(mailingRepository.getMailingStatus(mailingId)).thenReturn(Optional.of(Mailing.Status.DELIVERED));
+        var actualException = assertThrows(MailingAlreadyDeliveredException.class, ()->mailingService.setDeliveredStatus(mailingId));
+        assertEquals(HttpStatus.BAD_REQUEST, actualException.getHttpStatus(), "Actual exception doesn't have bad request as its http status!");
+        Mockito.verify(mailingRepository, Mockito.only()).getMailingStatus(mailingId);
+        Mockito.verify(mailingRepository, Mockito.never()).updateStatusById(eq(mailingId), any(Mailing.Status.class));
+    }
+    @Test
+    @DisplayName("set delivered status for not existing mailing")
+    public void setDeliveredStatusWhenMailingDoesNotExist(){
+        Long mailingId = 1L;
+        Mockito.when(mailingRepository.getMailingStatus(mailingId)).thenReturn(Optional.empty());
+        var actualException = assertThrows(MailingNotFoundException.class, ()->mailingService.setDeliveredStatus(mailingId));
+        assertEquals(HttpStatus.BAD_REQUEST, actualException.getHttpStatus(), "Actual exception doesn't have bad request as its http status!");
+        Mockito.verify(mailingRepository, Mockito.only()).getMailingStatus(mailingId);
+        Mockito.verify(mailingRepository, Mockito.never()).updateStatusById(eq(mailingId), any(Mailing.Status.class));
     }
 }
