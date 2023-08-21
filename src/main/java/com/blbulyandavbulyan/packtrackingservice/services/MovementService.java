@@ -26,14 +26,9 @@ public class MovementService {
             mailing.setStatus(newStatus);//меняем статус на то что посылка ещё в пути, мало ли, может быть изменили пункт назначения
             MailingMovement mailingMovement = new MailingMovement();
             mailingMovement.setMailing(mailing);
-            mailingMovement.setPostalOffice(postalOfficeService.getReferenceById(officeIndex));
-            try{
-                movementRepository.save(mailingMovement);
-                return mailingMovement;
-            }
-            catch (ConstraintViolationException constraintViolationException){
-                throw new RuntimeException();//бросить исключение о том что не найден postalOffice
-            }
+            mailingMovement.setPostalOffice(postalOfficeService.getById(officeIndex));
+            movementRepository.save(mailingMovement);
+            return mailingMovement;
         }
         else throw new MailingAlreadyDeliveredException("Mailing with id " + mailingId + " is already delivered, can't create mailing movement!");//бросить исключение, что посылка уже доставлена
     }
