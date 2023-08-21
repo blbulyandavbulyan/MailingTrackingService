@@ -9,6 +9,7 @@ import com.blbulyandavbulyan.packtrackingservice.exceptions.MailingAlreadyDelive
 import com.blbulyandavbulyan.packtrackingservice.exceptions.MailingAlreadyExistsException;
 import com.blbulyandavbulyan.packtrackingservice.exceptions.MailingNotFoundException;
 import com.blbulyandavbulyan.packtrackingservice.services.MailingService;
+import com.blbulyandavbulyan.packtrackingservice.services.MovementService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,6 +51,8 @@ public class MailingControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private MailingService mailingService;
+    @MockBean
+    private MovementService movementService;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final ResponseFieldsSnippet errorSnippet = responseFields(
             fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("http status of error"),
@@ -156,7 +159,7 @@ public class MailingControllerTest {
     @DisplayName("updating delivered status everything is ok")
     public void updateDeliveredStatus() throws Exception {
         Long mailingId = 1L;
-        mockMvc.perform(patch("/api/v1/mailings/{id}/delivered", mailingId))
+        mockMvc.perform(patch("/api/v1/mailings/{id}/status/delivered", mailingId))
                 .andExpect(status().isOk())
                 .andDo(
                         document(
@@ -164,7 +167,8 @@ public class MailingControllerTest {
                                 pathParameters(parameterWithName("id").description("The id of the mailing, which status will be set to delivered"))
                         )
                 );
-        Mockito.verify(mailingService, Mockito.only()).setDeliveredStatus(mailingId);
+        Mockito.verify(mailingService, Mockito.times(1)).setDeliveredStatus(mailingId);
+        Mockito.verify(movementService, Mockito.times(1)).closeLastMovement(mailingId);
     }
 
     @Test
@@ -174,14 +178,15 @@ public class MailingControllerTest {
         Mockito.doAnswer((invocationOnMock -> {
             throw new MailingNotFoundException("Mailing with id " + mailingId + " not found!", HttpStatus.BAD_REQUEST);
         })).when(mailingService).setDeliveredStatus(mailingId);
-        mockMvc.perform(patch("/api/v1/mailings/{id}/delivered", mailingId))
+        mockMvc.perform(patch("/api/v1/mailings/{id}/status/delivered", mailingId))
                 .andExpect(status().isBadRequest())
                 .andDo(document(
                         "update mailing status when mailing does not exists",
                         errorSnippet,
                         pathParameters(parameterWithName("id").description("The id of the mailing, which status will be set to delivered")))
                 );
-        Mockito.verify(mailingService, Mockito.only()).setDeliveredStatus(mailingId);
+        Mockito.verify(mailingService, Mockito.times(1)).setDeliveredStatus(mailingId);
+        Mockito.verify(movementService, Mockito.never()).closeLastMovement(mailingId);
     }
     @Test
     @DisplayName("updating delivered status when mailing is already delivered")
@@ -190,13 +195,14 @@ public class MailingControllerTest {
         Mockito.doAnswer((invocationOnMock -> {
             throw new MailingAlreadyDeliveredException("Mailing with id " + mailingId + " already exists!");
         })).when(mailingService).setDeliveredStatus(mailingId);
-        mockMvc.perform(patch("/api/v1/mailings/{id}/delivered", mailingId))
+        mockMvc.perform(patch("/api/v1/mailings/{id}/status/delivered", mailingId))
                 .andExpect(status().isBadRequest())
                 .andDo(document(
                         "update mailing status when mailing already delivered",
                         errorSnippet,
                         pathParameters(parameterWithName("id").description("The id of the mailing, which status will be set to delivered")))
                 );
-        Mockito.verify(mailingService, Mockito.only()).setDeliveredStatus(mailingId);
+        Mockito.verify(mailingService, Mockito.times(1)).setDeliveredStatus(mailingId);
+        Mockito.verify(movementService, Mockito.never()).closeLastMovement(mailingId);
     }
 }
