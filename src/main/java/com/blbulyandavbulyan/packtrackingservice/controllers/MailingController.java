@@ -22,7 +22,7 @@ public class MailingController {
     public void create(@RequestBody MailingDTO mailingDTO){
         mailingService.create(mailingDTO);
     }
-    @PatchMapping("/{mailingId}/delivered")
+    @PatchMapping("/{mailingId}/status/delivered")
     public void setDeliveredStatus(@PathVariable Long mailingId){
         mailingService.setDeliveredStatus(mailingId);
     }
