@@ -6,12 +6,14 @@ import com.blbulyandavbulyan.packtrackingservice.dtos.MovementDTO;
 import com.blbulyandavbulyan.packtrackingservice.dtos.ReceiverDTO;
 import com.blbulyandavbulyan.packtrackingservice.entities.Mailing;
 import com.blbulyandavbulyan.packtrackingservice.entities.Receiver;
+import com.blbulyandavbulyan.packtrackingservice.exceptions.MailingAlreadyDeliveredException;
 import com.blbulyandavbulyan.packtrackingservice.exceptions.MailingNotFoundException;
 import com.blbulyandavbulyan.packtrackingservice.exceptions.PostalOfficeNotFoundException;
 import com.blbulyandavbulyan.packtrackingservice.repositories.MailingRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
@@ -46,12 +48,13 @@ public class MailingService {
                 ).toList()
         );
     }
-
+    @Transactional
     public void setDeliveredStatus(Long mailingId) {
-        if(mailingRepository.existsById(mailingId)){
+        Mailing.Status oldStatus = mailingRepository.getMailingStatus(mailingId)
+                .orElseThrow(()-> new MailingNotFoundException("Отправление с id " + mailingId + " не найдено!", HttpStatus.BAD_REQUEST));
+        if(oldStatus != Mailing.Status.DELIVERED)
             mailingRepository.updateStatusById(mailingId, Mailing.Status.DELIVERED);
-        }
-        else throw new MailingNotFoundException("Отправление с id " + mailingId + " не найдено!", HttpStatus.BAD_REQUEST);
+        else throw new MailingAlreadyDeliveredException("Отправление с id " + mailingId + " уже было доставлено!");
     }
 
     public Mailing getById(Long mailingId) {
