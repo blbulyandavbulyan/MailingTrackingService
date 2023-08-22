@@ -26,6 +26,7 @@ public class MovementService {
             mailing.setStatus(newStatus);//меняем статус на то что посылка ещё в пути, мало ли, может быть изменили пункт назначения
             MailingMovement mailingMovement = new MailingMovement();
             mailingMovement.setMailing(mailing);
+            mailingMovement.setArrivalDateTime(Instant.now());
             mailingMovement.setPostalOffice(postalOfficeService.getById(officeIndex));
             movementRepository.save(mailingMovement);
             return mailingMovement;
