@@ -1,1 +1,13 @@
 === Creating movement
+'''
+include::{snippets}/movement-controller-test/successful-creating-movement/curl-request.adoc[]
+'''
+.request
+include::{snippets}/movement-controller-test/successful-creating-movement/http-request.adoc[]
+==== Successful creation
+.response
+include::{snippets}/movement-controller-test/successful-creating-movement/http-response.adoc[]
+.response body
+include::{snippets}/movement-controller-test/successful-creating-movement/response-body.adoc[]
+.response fields
+include::{snippets}/movement-controller-test/successful-creating-movement/response-fields.adoc[]
