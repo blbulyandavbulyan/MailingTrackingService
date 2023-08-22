@@ -4,9 +4,7 @@ import com.blbulyandavbulyan.packtrackingservice.entities.Mailing;
 import com.blbulyandavbulyan.packtrackingservice.entities.MailingMovement;
 import com.blbulyandavbulyan.packtrackingservice.entities.PostalOffice;
 import com.blbulyandavbulyan.packtrackingservice.entities.Receiver;
-import com.blbulyandavbulyan.packtrackingservice.exceptions.MailingAlreadyDeliveredException;
-import com.blbulyandavbulyan.packtrackingservice.exceptions.MailingNotFoundException;
-import com.blbulyandavbulyan.packtrackingservice.exceptions.PostalOfficeNotFoundException;
+import com.blbulyandavbulyan.packtrackingservice.exceptions.*;
 import com.blbulyandavbulyan.packtrackingservice.repositories.MovementRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
 import java.time.Instant;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -153,5 +152,39 @@ public class MovementServiceTest {
         assertNotNull(actualTime);
         Instant current = Instant.now();
         assertTrue(current.isAfter(actualTime));
+    }
+    @Test
+    @DisplayName("close movement when movement doesn't exist")
+    public void closeNotExistingMovement(){
+        Long movementId = 1L;
+        Mockito.when(movementRepository.findById(movementId)).thenReturn(Optional.empty());
+        var actualException = assertThrows(MovementNotFoundException.class, ()->movementService.closeMovement(movementId));
+        assertEquals(HttpStatus.BAD_REQUEST, actualException.getHttpStatus());
+        Mockito.verify(movementRepository, Mockito.only()).findById(movementId);
+    }
+    @Test
+    @DisplayName("close movement when it's already closed")
+    public void closeAlreadyClosedMovement(){
+        Long movementId = 1L;
+        MailingMovement mailingMovement = new MailingMovement();
+        mailingMovement.setMovementId(movementId);
+        mailingMovement.setDepartureDateTime(Instant.now());
+        Mockito.when(movementRepository.findById(movementId)).thenReturn(Optional.of(mailingMovement));
+        var actualException = assertThrows(MovementAlreadyClosedException.class, ()->movementService.closeMovement(movementId));
+        assertEquals(HttpStatus.BAD_REQUEST, actualException.getHttpStatus());
+        Mockito.verify(movementRepository, Mockito.only()).findById(movementId);
+    }
+    @Test
+    @DisplayName("close movement when movement not closed and exists")
+    public void closeMovement(){
+        Long movementId = 1L;
+        MailingMovement mailingMovement = new MailingMovement();
+        mailingMovement.setMovementId(movementId);
+        Mockito.when(movementRepository.findById(movementId)).thenReturn(Optional.of(mailingMovement));
+        assertDoesNotThrow(()->movementService.closeMovement(movementId));
+        Mockito.verify(movementRepository, Mockito.times(1)).findById(movementId);
+        var mailingCapture = ArgumentCaptor.forClass(MailingMovement.class);
+        Mockito.verify(movementRepository, Mockito.times(1)).save(mailingCapture.capture());
+        assertSame(mailingMovement, mailingCapture.getValue());
     }
 }
