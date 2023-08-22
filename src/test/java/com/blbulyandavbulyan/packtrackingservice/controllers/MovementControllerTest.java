@@ -66,7 +66,7 @@ public class MovementControllerTest {
                 .andExpect(jsonPath("arrivalDateTime").value(mailingMovement.getArrivalDateTime().toString()))
                 .andDo(
                         document(
-                                "Create movement",
+                                "{class-name}/{method-name}",
                                 formParameters(
                                         parameterWithName("mailing_id").description("The id of the mailing"),
                                         parameterWithName("office_index").description("The index of the postal office, where this mailing is")
