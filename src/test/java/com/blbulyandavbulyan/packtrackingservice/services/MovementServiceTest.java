@@ -18,7 +18,11 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
+import java.time.Instant;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 
 @ExtendWith({MockitoExtension.class})
 public class MovementServiceTest {
@@ -41,7 +45,7 @@ public class MovementServiceTest {
         var actualException = assertThrows(MailingAlreadyDeliveredException.class, ()->movementService.create(mailingId, 1242L));
         assertEquals(HttpStatus.BAD_REQUEST, actualException.getHttpStatus());
         Mockito.verify(mailingService, Mockito.only()).getById(mailingId);
-        Mockito.verify(movementRepository, Mockito.never()).save(Mockito.any());
+        Mockito.verify(movementRepository, Mockito.never()).save(any());
     }
     @Test
     @DisplayName("create movement when mailing does not exist")
@@ -53,7 +57,7 @@ public class MovementServiceTest {
         var actualException = assertThrows(MailingNotFoundException.class, ()->movementService.create(mailingId, 1243L));
         assertEquals(HttpStatus.BAD_REQUEST, actualException.getHttpStatus());
         Mockito.verify(mailingService, Mockito.only()).getById(mailingId);
-        Mockito.verify(movementRepository, Mockito.never()).save(Mockito.any());
+        Mockito.verify(movementRepository, Mockito.never()).save(any());
     }
     @Test
     @DisplayName("create movement when postal office does not exists")
@@ -76,7 +80,7 @@ public class MovementServiceTest {
         assertEquals(HttpStatus.BAD_REQUEST, actualException.getHttpStatus());
         Mockito.verify(mailingService, Mockito.times(1)).getById(mailingId);
         Mockito.verify(postalOfficeService, Mockito.times(1)).getById(postalOfficeIndex);
-        Mockito.verify(movementRepository, Mockito.never()).save(Mockito.any());
+        Mockito.verify(movementRepository, Mockito.never()).save(any());
     }
     @Test
     @DisplayName("normal creating movement, when current postal office not destination point")
@@ -137,5 +141,17 @@ public class MovementServiceTest {
         assertNotNull(actualSavingMovement.getArrivalDateTime());
         assertNull(actualSavingMovement.getDepartureDateTime());
         assertNull(actualSavingMovement.getMovementId());
+    }
+    @Test
+    @DisplayName("close last movement")
+    public void closeLastMovement(){
+        Long mailingId = 1L;
+        var timeCapture = ArgumentCaptor.forClass(Instant.class);
+        movementService.closeLastMovement(mailingId);
+        Mockito.verify(movementRepository, Mockito.only()).updateDepartureDateTimeForLastMovement(eq(mailingId), timeCapture.capture());
+        Instant actualTime = timeCapture.getValue();
+        assertNotNull(actualTime);
+        Instant current = Instant.now();
+        assertTrue(current.isAfter(actualTime));
     }
 }
