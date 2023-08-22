@@ -1,6 +1,7 @@
 package com.blbulyandavbulyan.packtrackingservice.services;
 
 import com.blbulyandavbulyan.packtrackingservice.entities.Mailing;
+import com.blbulyandavbulyan.packtrackingservice.entities.MailingMovement;
 import com.blbulyandavbulyan.packtrackingservice.entities.PostalOffice;
 import com.blbulyandavbulyan.packtrackingservice.entities.Receiver;
 import com.blbulyandavbulyan.packtrackingservice.exceptions.MailingAlreadyDeliveredException;
@@ -10,14 +11,14 @@ import com.blbulyandavbulyan.packtrackingservice.repositories.MovementRepository
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith({MockitoExtension.class})
 public class MovementServiceTest {
@@ -76,5 +77,35 @@ public class MovementServiceTest {
         Mockito.verify(mailingService, Mockito.times(1)).getById(mailingId);
         Mockito.verify(postalOfficeService, Mockito.times(1)).getById(postalOfficeIndex);
         Mockito.verify(movementRepository, Mockito.never()).save(Mockito.any());
+    }
+    @Test
+    @DisplayName("normal creating movement, when current postal office not destination point")
+    public void createMovement(){
+        Mailing mailing = new Mailing();
+        Long mailingId = 1L;
+        Long postalOfficeIndex = 2342L;
+        PostalOffice postalOfficeForMovement = new PostalOffice();
+        postalOfficeForMovement.setIndex(postalOfficeIndex);
+        mailing.setMailingId(mailingId);
+        mailing.setStatus(Mailing.Status.ON_THE_WAY);
+        PostalOffice postalOffice = new PostalOffice();
+        postalOffice.setIndex(243532L);
+        Receiver receiver = new Receiver();
+        receiver.setPostalOffice(postalOffice);
+        mailing.setReceiver(receiver);
+        Mockito.when(mailingService.getById(mailing.getMailingId())).thenReturn(mailing);
+        Mockito.when(postalOfficeService.getById(postalOfficeIndex)).thenReturn(postalOfficeForMovement);
+        assertDoesNotThrow(()->movementService.create(mailingId, postalOfficeIndex));
+        Mockito.verify(mailingService, Mockito.times(1)).getById(mailing.getMailingId());
+        Mockito.verify(postalOfficeService, Mockito.times(1)).getById(postalOfficeIndex);
+        ArgumentCaptor<MailingMovement> mailingMovementArgumentCaptor = ArgumentCaptor.forClass(MailingMovement.class);
+        Mockito.verify(movementRepository, Mockito.times(1)).save(mailingMovementArgumentCaptor.capture());
+        MailingMovement actualSavingMovement = mailingMovementArgumentCaptor.getValue();
+        assertEquals(Mailing.Status.ON_THE_WAY, mailing.getStatus());
+        assertEquals(mailing, actualSavingMovement.getMailing());
+        assertEquals(postalOfficeForMovement, actualSavingMovement.getPostalOffice());
+        assertNotNull(actualSavingMovement.getArrivalDateTime());
+        assertNull(actualSavingMovement.getDepartureDateTime());
+        assertNull(actualSavingMovement.getMovementId());
     }
 }
