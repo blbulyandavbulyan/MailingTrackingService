@@ -40,7 +40,7 @@ public class MovementControllerTest {
 
     @Test
     @DisplayName("test create movement")
-    public void testCreateMovement() throws Exception {
+    public void successfulCreatingMovement() throws Exception {
         Long mailingId = 1L;
         Long officeIndex = 12345L;
         MailingMovement mailingMovement = new MailingMovement();
