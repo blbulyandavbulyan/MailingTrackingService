@@ -1,66 +1,69 @@
-=== Creation mailing
+=== Creating mailing
 
 '''
-include::{snippets}/Successful create new mailing/curl-request.adoc[]
+include::{snippets}/mailing-controller-test/successful-create-new-mailing/curl-request.adoc[]
 '''
 .request
-include::{snippets}/Successful create new mailing/http-request.adoc[]
+include::{snippets}/mailing-controller-test/successful-create-new-mailing/http-request.adoc[]
 .request fields
-include::{snippets}/Successful create new mailing/request-fields.adoc[]
-==== If mailing with given id exists
+include::{snippets}/mailing-controller-test/successful-create-new-mailing/request-fields.adoc[]
+==== Successful creating new mailing
 .response
-include::{snippets}/Successful create new mailing/http-response.adoc[]
-==== If mailing with given id doesn't exist
+include::{snippets}/mailing-controller-test/successful-create-new-mailing/http-response.adoc[]
+==== If mailing with this id already exists
 .response
-include::{snippets}/create new mailing if it already exists/http-response.adoc[]
+include::{snippets}/mailing-controller-test/create-mailing-when-mailing-with-this-id-exists/http-response.adoc[]
 .response body
-include::{snippets}/create new mailing if it already exists/response-body.adoc[]
+include::{snippets}/mailing-controller-test/create-mailing-when-mailing-with-this-id-exists/response-body.adoc[]
 .response fields
-include::{snippets}/create new mailing if it already exists/response-fields.adoc[]
+include::{snippets}/mailing-controller-test/create-mailing-when-mailing-with-this-id-exists/response-fields.adoc[]
+==== If postal office with postal index in receiver does not exist
+todo
 
 === Getting info about mailing
-include::{snippets}/Getting info about mailing/path-parameters.adoc[]
+'''
+include::{snippets}/mailing-controller-test/getting-info-about-mailing/curl-request.adoc[]
+'''
+include::{snippets}/mailing-controller-test/getting-info-about-mailing/path-parameters.adoc[]
 ==== When mailing with given id exists
-'''
-include::{snippets}/Getting info about mailing/curl-request.adoc[]
-'''
 .request
-include::{snippets}/Getting info about mailing/http-request.adoc[]
+include::{snippets}/mailing-controller-test/getting-info-about-mailing/http-request.adoc[]
 .response body
 
-include::{snippets}/Getting info about mailing/response-body.adoc[]
+include::{snippets}/mailing-controller-test/getting-info-about-mailing/response-body.adoc[]
 
 .response fields
-include::{snippets}/Getting info about mailing/response-fields.adoc[]
+include::{snippets}/mailing-controller-test/getting-info-about-mailing/response-fields.adoc[]
 ==== When mailing with given id doesn't exist
 
 .request
-include::{snippets}/Getting info for not existing mailing/http-request.adoc[]
+include::{snippets}/mailing-controller-test/getting-info-for-not-existing-mailing/http-request.adoc[]
 .response
-include::{snippets}/Getting info for not existing mailing/http-response.adoc[]
-.response body
-include::{snippets}/Getting info for not existing mailing/response-body.adoc[]
-.response fields
+include::{snippets}/mailing-controller-test/getting-info-for-not-existing-mailing/http-response.adoc[]
 
-include::{snippets}/Getting info for not existing mailing/response-fields.adoc[]
+.response body
+include::{snippets}/mailing-controller-test/getting-info-for-not-existing-mailing/response-body.adoc[]
+.response fields
+include::{snippets}/mailing-controller-test/getting-info-for-not-existing-mailing/response-fields.adoc[]
 === Updating delivered status
-.curl request
-include::{snippets}/update delivered status when ok/curl-request.adoc[]
-include::{snippets}/update delivered status when ok/path-parameters.adoc[]
+'''
+include::{snippets}/mailing-controller-test/update-delivered-status/curl-request.adoc[]
+'''
+include::{snippets}/mailing-controller-test/update-delivered-status/path-parameters.adoc[]
 ==== When mailing exists and not delivered
 .response
-include::{snippets}/update delivered status when ok/http-response.adoc[]
+include::{snippets}/mailing-controller-test/update-delivered-status/http-response.adoc[]
 ==== When mailing does not exist
 .response
-include::{snippets}/update mailing status when mailing does not exists/http-response.adoc[]
+include::{snippets}/mailing-controller-test/update-delivered-status-when-mailing-does-not-exist/http-response.adoc[]
 .response body
-include::{snippets}/update mailing status when mailing does not exists/response-body.adoc[]
+include::{snippets}/mailing-controller-test/update-delivered-status-when-mailing-does-not-exist/response-body.adoc[]
 .response fields
-include::{snippets}/update mailing status when mailing does not exists/response-fields.adoc[]
+include::{snippets}/mailing-controller-test/update-delivered-status-when-mailing-does-not-exist/response-fields.adoc[]
 ==== When mailing already delivered
 .response
-include::{snippets}/update mailing status when mailing already delivered/http-response.adoc[]
+include::{snippets}/mailing-controller-test/update-delivered-status-when-mailing-already-delivered/http-response.adoc[]
 .response body
-include::{snippets}/update mailing status when mailing already delivered/response-body.adoc[]
+include::{snippets}/mailing-controller-test/update-delivered-status-when-mailing-already-delivered/response-body.adoc[]
 .response fields
-include::{snippets}/update mailing status when mailing already delivered/response-fields.adoc[]
+include::{snippets}/mailing-controller-test/update-delivered-status-when-mailing-already-delivered/response-fields.adoc[]
