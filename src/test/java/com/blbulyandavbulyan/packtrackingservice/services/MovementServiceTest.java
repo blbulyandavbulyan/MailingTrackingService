@@ -108,4 +108,34 @@ public class MovementServiceTest {
         assertNull(actualSavingMovement.getDepartureDateTime());
         assertNull(actualSavingMovement.getMovementId());
     }
+    @Test
+    @DisplayName("normal creating movement, when current postal office is destination point")
+    public void createMovementWhenCurrentPostalOfficeMatchesWithReceiverPostalOffice(){
+        Mailing mailing = new Mailing();
+        Long mailingId = 1L;
+        Long postalOfficeIndex = 2342L;
+        PostalOffice postalOfficeForMovement = new PostalOffice();
+        postalOfficeForMovement.setIndex(postalOfficeIndex);
+        mailing.setMailingId(mailingId);
+        mailing.setStatus(Mailing.Status.ON_THE_WAY);
+        PostalOffice postalOffice = new PostalOffice();
+        postalOffice.setIndex(postalOfficeIndex);
+        Receiver receiver = new Receiver();
+        receiver.setPostalOffice(postalOffice);
+        mailing.setReceiver(receiver);
+        Mockito.when(mailingService.getById(mailing.getMailingId())).thenReturn(mailing);
+        Mockito.when(postalOfficeService.getById(postalOfficeIndex)).thenReturn(postalOfficeForMovement);
+        assertDoesNotThrow(()->movementService.create(mailingId, postalOfficeIndex));
+        Mockito.verify(mailingService, Mockito.times(1)).getById(mailing.getMailingId());
+        Mockito.verify(postalOfficeService, Mockito.times(1)).getById(postalOfficeIndex);
+        ArgumentCaptor<MailingMovement> mailingMovementArgumentCaptor = ArgumentCaptor.forClass(MailingMovement.class);
+        Mockito.verify(movementRepository, Mockito.times(1)).save(mailingMovementArgumentCaptor.capture());
+        MailingMovement actualSavingMovement = mailingMovementArgumentCaptor.getValue();
+        assertEquals(Mailing.Status.IN_THE_DESTINATION, mailing.getStatus());
+        assertEquals(mailing, actualSavingMovement.getMailing());
+        assertEquals(postalOfficeForMovement, actualSavingMovement.getPostalOffice());
+        assertNotNull(actualSavingMovement.getArrivalDateTime());
+        assertNull(actualSavingMovement.getDepartureDateTime());
+        assertNull(actualSavingMovement.getMovementId());
+    }
 }
