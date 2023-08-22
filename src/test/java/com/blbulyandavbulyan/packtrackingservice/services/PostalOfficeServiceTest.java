@@ -21,17 +21,17 @@ public class PostalOfficeServiceTest {
     @Test
     @DisplayName("exist by id when postal office exists")
     public void existByIdWhenExistsTest(){
-        Long mailingId = 1L;
-        Mockito.when(postalOfficeRepository.existsById(mailingId)).thenReturn(true);
-        assertTrue(underTest.existByIndex(mailingId));
-        Mockito.verify(postalOfficeRepository, Mockito.only()).existsById(mailingId);
+        Long postalOfficeIndex = 1L;
+        Mockito.when(postalOfficeRepository.existsById(postalOfficeIndex)).thenReturn(true);
+        assertTrue(underTest.existByIndex(postalOfficeIndex));
+        Mockito.verify(postalOfficeRepository, Mockito.only()).existsById(postalOfficeIndex);
     }
     @Test
     @DisplayName("exist by id when postal office doesn't exists")
     public void existByIdWhenDoesNotExistsTest(){
-        Long mailingId = 1L;
-        Mockito.when(postalOfficeRepository.existsById(mailingId)).thenReturn(false);
-        assertFalse(underTest.existByIndex(mailingId));
-        Mockito.verify(postalOfficeRepository, Mockito.only()).existsById(mailingId);
+        Long postalOfficeIndex = 1L;
+        Mockito.when(postalOfficeRepository.existsById(postalOfficeIndex)).thenReturn(false);
+        assertFalse(underTest.existByIndex(postalOfficeIndex));
+        Mockito.verify(postalOfficeRepository, Mockito.only()).existsById(postalOfficeIndex);
     }
 }
