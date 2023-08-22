@@ -2,3 +2,5 @@
 
 == Working with mailings:
 include::mailing.adoc[]
+== Working with movements:
+include::movements.adoc[]
