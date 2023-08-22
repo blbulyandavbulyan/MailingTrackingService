@@ -1,5 +1,6 @@
 package com.blbulyandavbulyan.packtrackingservice.services;
 
+import com.blbulyandavbulyan.packtrackingservice.entities.PostalOffice;
 import com.blbulyandavbulyan.packtrackingservice.repositories.PostalOfficeRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,8 +10,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 public class PostalOfficeServiceTest {
@@ -33,5 +33,14 @@ public class PostalOfficeServiceTest {
         Mockito.when(postalOfficeRepository.existsById(postalOfficeIndex)).thenReturn(false);
         assertFalse(underTest.existByIndex(postalOfficeIndex));
         Mockito.verify(postalOfficeRepository, Mockito.only()).existsById(postalOfficeIndex);
+    }
+    @Test
+    @DisplayName("get reference by id")
+    public void getReferenceByIdTest(){
+        Long postalOfficeIndex = 1L;
+        PostalOffice expected = new PostalOffice();
+        Mockito.when(postalOfficeRepository.getReferenceById(postalOfficeIndex)).thenReturn(expected);
+        PostalOffice actual = underTest.getReferenceById(postalOfficeIndex);
+        assertSame(expected, actual);
     }
 }
