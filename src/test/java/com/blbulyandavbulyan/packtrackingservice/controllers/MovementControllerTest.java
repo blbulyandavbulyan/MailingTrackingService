@@ -19,13 +19,14 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.formParameters;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
@@ -81,5 +82,43 @@ public class MovementControllerTest {
                         )
                 );
 
+    }
+
+    @Test
+    @DisplayName("close movement test")
+    public void closeMovement() throws Exception {
+        Long mailingId = 23423422342L;
+        Long movementId = 232L;
+        Long postalOfficeIndex = 21413123L;
+        MailingMovement mailingMovement = new MailingMovement();
+        PostalOffice postalOffice = new PostalOffice();
+        postalOffice.setIndex(postalOfficeIndex);
+        mailingMovement.setPostalOffice(postalOffice);
+        mailingMovement.setMovementId(movementId);
+        mailingMovement.setArrivalDateTime(Instant.now());
+        mailingMovement.setDepartureDateTime(Instant.now().plus(2, ChronoUnit.HOURS));
+        Mailing mailing = new Mailing();
+        mailing.setMailingId(mailingId);
+        mailingMovement.setMailing(mailing);
+        Mockito.when(movementService.closeMovement(movementId)).thenReturn(mailingMovement);
+        mockMvc.perform(patch("/api/v1/movements/{movementId}", movementId))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("movementId").value(movementId))
+                .andExpect(jsonPath("mailingId").value(mailingId))
+                .andExpect(jsonPath("departureDateTime").value(mailingMovement.getDepartureDateTime().toString()))
+                .andExpect(jsonPath("arrivalDateTime").value(mailingMovement.getArrivalDateTime().toString()))
+                .andDo(document(
+                                "{class-name}/{method-name}",
+                                pathParameters(parameterWithName("movementId").description("The id of the closing movement")),
+                                responseFields(
+                                        fieldWithPath("movementId").description("The id of the closing movement"),
+                                        fieldWithPath("mailingId").description("Mailing id which associated with this movement"),
+                                        fieldWithPath("arrivalDateTime").description("The date and time of arrival in the postal office"),
+                                        fieldWithPath("departureDateTime").description("The date and time of closing this arrival, and in this date and time the mailing leaved the postal office")
+                                )
+                        )
+                );
+        Mockito.verify(movementService, Mockito.only()).closeMovement(movementId);
     }
 }
