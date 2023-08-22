@@ -3,6 +3,8 @@ package com.blbulyandavbulyan.packtrackingservice.services;
 import com.blbulyandavbulyan.packtrackingservice.entities.Mailing;
 import com.blbulyandavbulyan.packtrackingservice.entities.MailingMovement;
 import com.blbulyandavbulyan.packtrackingservice.exceptions.MailingAlreadyDeliveredException;
+import com.blbulyandavbulyan.packtrackingservice.exceptions.MovementAlreadyClosedException;
+import com.blbulyandavbulyan.packtrackingservice.exceptions.MovementNotFoundException;
 import com.blbulyandavbulyan.packtrackingservice.repositories.MovementRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,9 +34,10 @@ public class MovementService {
     }
     @Transactional
     public MailingMovement closeMovement(Long movementId) {
-        MailingMovement mailingMovement = movementRepository.findById(movementId).orElseThrow();
+        MailingMovement mailingMovement = movementRepository.findById(movementId)
+                .orElseThrow(()->new MovementNotFoundException("Movement with id " + movementId + " not found!"));
         if(mailingMovement.getDepartureDateTime() != null)//бросаем исключение о том что это перемещение уже закрыто
-            throw new RuntimeException();
+            throw new MovementAlreadyClosedException("Movement with id " + movementId + " is already closed!");
         else{
             mailingMovement.setDepartureDateTime(Instant.now());
             movementRepository.save(mailingMovement);
