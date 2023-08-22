@@ -65,13 +65,13 @@ public class MailingControllerTest {
 
     @Test
     @DisplayName("create mailing when everything is ok")
-    public void testCreateMailing() throws Exception {
+    public void successfulCreateNewMailing() throws Exception {
         MailingDTO mailingDTO = new MailingDTO(1L, Mailing.Type.LETTER, new ReceiverDTO(324456L, "Unknown", "Somewhere"));
         mockMvc.perform(
                 post("/api/v1/mailings").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(mailingDTO))
         ).andExpect(status().isCreated()).andDo(
-                document("Successful create new mailing",
+                document("{class-name}/{method-name}",
                         requestFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("Identifier of mailing"),
                                 mailingTypeField,
@@ -86,7 +86,7 @@ public class MailingControllerTest {
 
     @Test
     @DisplayName("getting info when mailing exist")
-    public void testGettingInfoAboutMailing() throws Exception {
+    public void gettingInfoAboutMailing() throws Exception {
         MailingInfoDTO mailingInfoDTO = new MailingInfoDTO(1L, Mailing.Type.LETTER, Mailing.Status.ON_THE_WAY,
                 List.of(
                         new MovementDTO(1L, 1L, ZonedDateTime.now().toInstant(), ZonedDateTime.now().plusHours(1).toInstant()),
@@ -100,7 +100,7 @@ public class MailingControllerTest {
                 .andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andDo(
                         document(
-                                "Getting info about mailing",
+                                "{class-name}/{method-name}",
                                 responseFields(
                                         fieldWithPath("mailingId").type(JsonFieldType.NUMBER).description("The identifier of the mailing of this movement"),
                                         mailingTypeField,
@@ -121,7 +121,7 @@ public class MailingControllerTest {
 
     @Test
     @DisplayName("getting info when mailing doesn't exist")
-    public void testGettingInfoForNotExistingMailing() throws Exception {
+    public void gettingInfoForNotExistingMailing() throws Exception {
         Long mailingId = 1L;
         Mockito.when(mailingService.getInfo(mailingId)).then((invocation) -> {
             throw new MailingNotFoundException("Mailing with id " + mailingId + " not found!", HttpStatus.NOT_FOUND);
@@ -133,13 +133,13 @@ public class MailingControllerTest {
                 .andExpect(jsonPath("timestamp").isNotEmpty())
                 .andExpect(jsonPath("message").isString())
                 .andExpect(jsonPath("message").isNotEmpty())
-                .andDo(document("Getting info for not existing mailing", errorSnippet));
+                .andDo(document("{class-name}/{method-name}", errorSnippet));
         Mockito.verify(mailingService, Mockito.only()).getInfo(mailingId);
     }
 
     @Test
     @DisplayName("create mailing when mailing with this id exists")
-    public void testCreateMailingWhenMailingWithThisIdExists() throws Exception {
+    public void createMailingWhenMailingWithThisIdExists() throws Exception {
         MailingDTO mailingDTO = new MailingDTO(1L, Mailing.Type.LETTER, new ReceiverDTO(324456L, "Unknown", "Somewhere"));
         Mockito.doAnswer((invocationOnMock -> {
             throw new MailingAlreadyExistsException("Mailing with id " + mailingDTO.id() + " already exists!", HttpStatus.BAD_REQUEST);
@@ -151,7 +151,7 @@ public class MailingControllerTest {
                 .andExpect(jsonPath("timestamp").isNotEmpty())
                 .andExpect(jsonPath("message").isString())
                 .andExpect(jsonPath("message").isNotEmpty())
-                .andDo(document("create new mailing if it already exists", errorSnippet));
+                .andDo(document("{class-name}/{method-name}", errorSnippet));
         Mockito.verify(mailingService, Mockito.times(1)).create(mailingDTO);
     }
 
@@ -163,7 +163,7 @@ public class MailingControllerTest {
                 .andExpect(status().isOk())
                 .andDo(
                         document(
-                                "update delivered status when ok",
+                                "{class-name}/{method-name}",
                                 pathParameters(parameterWithName("id").description("The id of the mailing, which status will be set to delivered"))
                         )
                 );
@@ -181,7 +181,7 @@ public class MailingControllerTest {
         mockMvc.perform(patch("/api/v1/mailings/{id}/status/delivered", mailingId))
                 .andExpect(status().isBadRequest())
                 .andDo(document(
-                        "update mailing status when mailing does not exists",
+                        "{class-name}/{method-name}",
                         errorSnippet,
                         pathParameters(parameterWithName("id").description("The id of the mailing, which status will be set to delivered")))
                 );
@@ -198,7 +198,7 @@ public class MailingControllerTest {
         mockMvc.perform(patch("/api/v1/mailings/{id}/status/delivered", mailingId))
                 .andExpect(status().isBadRequest())
                 .andDo(document(
-                        "update mailing status when mailing already delivered",
+                        "{class-name}/{method-name}",
                         errorSnippet,
                         pathParameters(parameterWithName("id").description("The id of the mailing, which status will be set to delivered")))
                 );
