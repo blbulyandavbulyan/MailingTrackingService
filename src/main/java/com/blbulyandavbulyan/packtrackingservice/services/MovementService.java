@@ -1,12 +1,9 @@
 package com.blbulyandavbulyan.packtrackingservice.services;
 
-import com.blbulyandavbulyan.packtrackingservice.dtos.MovementCreatedDTO;
-import com.blbulyandavbulyan.packtrackingservice.dtos.MovementDTO;
 import com.blbulyandavbulyan.packtrackingservice.entities.Mailing;
 import com.blbulyandavbulyan.packtrackingservice.entities.MailingMovement;
 import com.blbulyandavbulyan.packtrackingservice.exceptions.MailingAlreadyDeliveredException;
 import com.blbulyandavbulyan.packtrackingservice.repositories.MovementRepository;
-import jakarta.validation.ConstraintViolationException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
