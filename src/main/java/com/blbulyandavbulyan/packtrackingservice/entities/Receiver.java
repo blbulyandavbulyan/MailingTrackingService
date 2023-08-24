@@ -1,6 +1,7 @@
 package com.blbulyandavbulyan.packtrackingservice.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,8 +9,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Receiver {
+    @NotBlank
     @Column(name = "receiver_name")
     private String name;
+    @NotBlank
     @Column(name = "receiver_address")
     private String address;
     @ManyToOne(fetch = FetchType.LAZY)

@@ -22,6 +22,7 @@ public class Mailing {
     @Column(name = "mailing_id")
     @NotNull
     private Long mailingId;
+    @NotNull
     @Enumerated(EnumType.STRING)
     private Type type;
     @Embedded
