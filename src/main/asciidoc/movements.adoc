@@ -11,3 +11,16 @@ include::{snippets}/movement-controller-test/successful-creating-movement/http-r
 include::{snippets}/movement-controller-test/successful-creating-movement/response-body.adoc[]
 .response fields
 include::{snippets}/movement-controller-test/successful-creating-movement/response-fields.adoc[]
+=== Closing movement
+'''
+include::{snippets}/movement-controller-test/close-movement/curl-request.adoc[]
+'''
+include::{snippets}/movement-controller-test/close-movement/http-request.adoc[]
+include::{snippets}/movement-controller-test/close-movement/path-parameters.adoc[]
+==== When movement exists and not closed
+.http response
+include::{snippets}/movement-controller-test/close-movement/http-response.adoc[]
+.response body
+include::{snippets}/movement-controller-test/close-movement/response-body.adoc[]
+.response fields
+include::{snippets}/movement-controller-test/close-movement/response-fields.adoc[]
