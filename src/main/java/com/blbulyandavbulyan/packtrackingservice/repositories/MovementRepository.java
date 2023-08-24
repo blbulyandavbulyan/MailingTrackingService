@@ -11,7 +11,7 @@ import java.time.Instant;
 
 public interface MovementRepository extends JpaRepository<MailingMovement, Long> {
     @Transactional
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("UPDATE #{#entityName} m SET m.departureDateTime = :departureDateTime WHERE m.arrivalDateTime = " +
             "(SELECT MAX(m2.arrivalDateTime) FROM #{#entityName} m2 WHERE m2.mailing.mailingId = :mailingId)")
     void updateDepartureDateTimeForLastMovement(@Param("mailingId") Long mailingId, @Param("departureDateTime") Instant departureDateTime);
