@@ -7,6 +7,7 @@ import com.blbulyandavbulyan.packtrackingservice.dtos.ReceiverDTO;
 import com.blbulyandavbulyan.packtrackingservice.entities.Mailing;
 import com.blbulyandavbulyan.packtrackingservice.entities.Receiver;
 import com.blbulyandavbulyan.packtrackingservice.exceptions.MailingAlreadyDeliveredException;
+import com.blbulyandavbulyan.packtrackingservice.exceptions.MailingAlreadyExistsException;
 import com.blbulyandavbulyan.packtrackingservice.exceptions.MailingNotFoundException;
 import com.blbulyandavbulyan.packtrackingservice.exceptions.PostalOfficeNotFoundException;
 import com.blbulyandavbulyan.packtrackingservice.repositories.MailingRepository;
@@ -21,6 +22,8 @@ public class MailingService {
     private MailingRepository mailingRepository;
     private PostalOfficeService postalOfficeService;
     public void create(MailingDTO mailingDTO) {
+        if(mailingRepository.existsById(mailingDTO.id()))
+            throw new MailingAlreadyExistsException("Mailing with id " + mailingDTO.id() + " already exists!");
         Mailing mailing = new Mailing();
         mailing.setMailingId(mailingDTO.id());
         mailing.setType(mailingDTO.type());
