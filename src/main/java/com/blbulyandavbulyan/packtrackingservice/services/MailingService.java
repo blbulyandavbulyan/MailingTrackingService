@@ -61,8 +61,4 @@ public class MailingService {
         // TODO: 19.08.2023 Возможно понадобится возвращать отсюда optional, чтобы те кто используют сервис сами решали что делать с пустым optional
         return mailingRepository.findById(mailingId).orElseThrow(() -> new MailingNotFoundException("Отправление с id " + mailingId + " не найдено!", HttpStatus.BAD_REQUEST));
     }
-
-    public void save(Mailing mailing) {
-        mailingRepository.save(mailing);
-    }
 }
