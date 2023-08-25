@@ -18,6 +18,7 @@ public class MovementService {
     private MovementRepository movementRepository;
     private MailingService mailingService;
     private PostalOfficeService postalOfficeService;
+    @Transactional
     public MailingMovement create(Long mailingId, Long officeIndex) {
         Mailing mailing = mailingService.getById(mailingId);
         if(mailing.getStatus() != Mailing.Status.DELIVERED){
