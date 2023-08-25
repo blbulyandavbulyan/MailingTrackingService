@@ -56,7 +56,7 @@ public class MailingServiceTest {
         ArgumentCaptor<Mailing> mailingArgumentCaptor = ArgumentCaptor.forClass(Mailing.class);
         Mockito.verify(mailingRepository).save(mailingArgumentCaptor.capture());
         Mailing mailing = mailingArgumentCaptor.getValue();
-        assertEquals(mailingDTO.id(), mailing.getMailingId());
+        assertEquals(mailingDTO.id(), mailing.getMailingId(), "id are not equal");
         assertEquals(Mailing.Status.ON_THE_WAY, mailing.getStatus(), "Mailing status is not \"ON_THE_WAY\"");
         assertEquals(mailingDTO.type(), mailing.getType(), "Mailing type doesn't match");
         assertNotNull(mailing.getReceiver(), "Receiver is null in mailing!");
