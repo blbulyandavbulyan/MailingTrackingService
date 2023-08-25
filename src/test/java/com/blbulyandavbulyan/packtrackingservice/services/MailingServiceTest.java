@@ -80,7 +80,6 @@ public class MailingServiceTest {
     public void createMailingWhenExists(){
         Long postalOfficeId = 1L;
         MailingDTO mailingDTO = new MailingDTO(1L, Mailing.Type.LETTER, new ReceiverDTO(postalOfficeId, "Евгений", "какой-то адрес"));
-        Mockito.when(postalOfficeService.existByIndex(postalOfficeId)).thenReturn(true);
         Mockito.when(mailingRepository.existsById(mailingDTO.id())).thenReturn(true);
         var actualException = assertThrows(MailingAlreadyExistsException.class, ()-> mailingService.create(mailingDTO));
         assertEquals(HttpStatus.BAD_REQUEST, actualException.getHttpStatus());
