@@ -22,7 +22,7 @@ public class MailingService {
     private PostalOfficeService postalOfficeService;
     public void create(MailingDTO mailingDTO) {
         Mailing mailing = new Mailing();
-        mailing.setMailingId(mailing.getMailingId());
+        mailing.setMailingId(mailingDTO.id());
         mailing.setType(mailingDTO.type());
         Receiver receiver = new Receiver();
         mailing.setReceiver(receiver);
