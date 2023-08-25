@@ -9,6 +9,7 @@ import com.blbulyandavbulyan.packtrackingservice.entities.MailingMovement;
 import com.blbulyandavbulyan.packtrackingservice.entities.PostalOffice;
 import com.blbulyandavbulyan.packtrackingservice.entities.Receiver;
 import com.blbulyandavbulyan.packtrackingservice.exceptions.MailingAlreadyDeliveredException;
+import com.blbulyandavbulyan.packtrackingservice.exceptions.MailingAlreadyExistsException;
 import com.blbulyandavbulyan.packtrackingservice.exceptions.MailingNotFoundException;
 import com.blbulyandavbulyan.packtrackingservice.exceptions.PostalOfficeNotFoundException;
 import com.blbulyandavbulyan.packtrackingservice.repositories.MailingRepository;
@@ -72,6 +73,18 @@ public class MailingServiceTest {
         MailingDTO mailingDTO = new MailingDTO(1L, Mailing.Type.LETTER, new ReceiverDTO(postalOfficeId, "Евгений", "какой-то адрес"));
         Mockito.when(postalOfficeService.existByIndex(postalOfficeId)).thenReturn(false);
         assertThrows(PostalOfficeNotFoundException.class, ()->mailingService.create(mailingDTO));
+        Mockito.verify(mailingRepository, Mockito.never()).save(any());
+    }
+    @Test
+    @DisplayName("create mailing when it's already exist")
+    public void createMailingWhenExists(){
+        Long postalOfficeId = 1L;
+        MailingDTO mailingDTO = new MailingDTO(1L, Mailing.Type.LETTER, new ReceiverDTO(postalOfficeId, "Евгений", "какой-то адрес"));
+        Mockito.when(postalOfficeService.existByIndex(postalOfficeId)).thenReturn(true);
+        Mockito.when(mailingRepository.existsById(mailingDTO.id())).thenReturn(true);
+        var actualException = assertThrows(MailingAlreadyExistsException.class, ()-> mailingService.create(mailingDTO));
+        assertEquals(HttpStatus.BAD_REQUEST, actualException.getHttpStatus());
+        Mockito.verify(mailingRepository, Mockito.only()).existsById(mailingDTO.id());
         Mockito.verify(mailingRepository, Mockito.never()).save(any());
     }
     @Test
