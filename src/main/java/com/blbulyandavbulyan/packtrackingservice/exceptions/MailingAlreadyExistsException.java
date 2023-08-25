@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 
 public class MailingAlreadyExistsException extends ResourceAlreadyExistsException{
 
-    public MailingAlreadyExistsException(String message, HttpStatus httpStatus) {
-        super(message, httpStatus);
+    public MailingAlreadyExistsException(String message) {
+        super(message, HttpStatus.BAD_REQUEST);
     }
 }
