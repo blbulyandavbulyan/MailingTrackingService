@@ -4,6 +4,7 @@ import com.blbulyandavbulyan.packtrackingservice.dtos.MailingDTO;
 import com.blbulyandavbulyan.packtrackingservice.dtos.MailingInfoDTO;
 import com.blbulyandavbulyan.packtrackingservice.services.MailingService;
 import com.blbulyandavbulyan.packtrackingservice.services.MovementService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,7 @@ public class MailingController {
     }
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void create(@RequestBody MailingDTO mailingDTO){
+    public void create(@Valid @RequestBody MailingDTO mailingDTO){
         mailingService.create(mailingDTO);
     }
     @Transactional
